@@ -5,7 +5,7 @@
 
 # ## IPython magics
 
-# In[1]:
+# In[62]:
 
 
 get_ipython().run_line_magic('matplotlib', 'inline')
@@ -13,7 +13,7 @@ get_ipython().run_line_magic('matplotlib', 'inline')
 
 # ## Imports
 
-# In[2]:
+# In[63]:
 
 
 import importlib
@@ -41,21 +41,28 @@ plt.rcParams['figure.figsize'] = [15, 4.5]
 
 # ## Load data
 
-# In[3]:
+# In[64]:
 
 
 train = pd.read_csv('../data/raw/train.csv')
 train.head(15)
 
 
-# In[4]:
+# In[65]:
 
 
 train.info()
 print('train.shape:', train.shape)
 
 
-# In[5]:
+# In[119]:
+
+
+test = pd.read_csv('../data/raw/test.csv')
+test.head()
+
+
+# In[66]:
 
 
 data_dict = pd.read_excel('../references/data_dict.xlsx')
@@ -64,22 +71,29 @@ data_dict
 
 # ## Missing values
 
-# In[6]:
+# In[67]:
 
 
 importlib.reload(eda)
 eda.get_nan_counts(train)
 
 
+# In[120]:
+
+
+importlib.reload(eda)
+eda.get_nan_counts(test)
+
+
 # ## Survived
 
-# In[10]:
+# In[68]:
 
 
 eda.get_count_percentage(train, 'Survived', sort='count')
 
 
-# In[11]:
+# In[69]:
 
 
 sns.countplot(y='Survived', data=train)
@@ -88,20 +102,20 @@ plt.gcf().suptitle('Survival count', fontsize=15);
 
 # ## Pclass
 
-# In[12]:
+# In[70]:
 
 
 eda.get_count_percentage(train, 'Pclass')
 
 
-# In[13]:
+# In[71]:
 
 
 sns.countplot(y='Pclass', data=train)
 plt.gca().set_title('Pclass count', fontsize=15);
 
 
-# In[14]:
+# In[72]:
 
 
 g = sns.catplot(x="Pclass", y="Survived", data=train, kind="bar", palette="deep", 
@@ -115,7 +129,7 @@ for p in ax.patches:
             fontsize=13, ha='center', va='bottom')
 
 
-# In[15]:
+# In[73]:
 
 
 g = sns.catplot(x="Pclass", y="Survived", hue='Sex', data=train, kind="bar", palette="deep", 
@@ -131,14 +145,14 @@ for p in ax.patches:
 
 # ## Title
 
-# In[16]:
+# In[74]:
 
 
 train['Title'] = train['Name'].str.extract(' ([A-Za-z]+)\.', expand=False)
 pd.crosstab(train['Title'], train['Sex'])
 
 
-# In[17]:
+# In[75]:
 
 
 train['Title'].replace('Mlle', 'Miss', inplace=True)
@@ -147,7 +161,7 @@ train['Title'].replace('Mme', 'Mrs', inplace=True)
 pd.crosstab(train['Title'], train['Sex'])
 
 
-# In[18]:
+# In[76]:
 
 
 title_other_filter = ~train['Title'].isin(['Mr', 'Master', 'Mrs', 'Miss'])
@@ -155,7 +169,7 @@ train.loc[title_other_filter, 'Title'] = 'Other'
 pd.crosstab(train['Title'], train['Sex'])
 
 
-# In[19]:
+# In[77]:
 
 
 g = sns.catplot(x="Title", y="Survived", data=train, kind="bar", palette="deep", 
@@ -171,20 +185,20 @@ for p in ax.patches:
 
 # ## Sex
 
-# In[20]:
+# In[78]:
 
 
 eda.get_count_percentage(train, 'Sex')
 
 
-# In[21]:
+# In[79]:
 
 
 sns.countplot(y='Sex', data=train)
 plt.gca().set_title('Sex count', fontsize=15);
 
 
-# In[22]:
+# In[80]:
 
 
 g = sns.catplot(x="Sex", y="Survived", data=train, kind="bar", palette="deep", 
@@ -200,20 +214,20 @@ for p in ax.patches:
 
 # ## SibSp
 
-# In[23]:
+# In[81]:
 
 
 eda.get_count_percentage(train, 'SibSp')
 
 
-# In[24]:
+# In[82]:
 
 
 sns.countplot(y='SibSp', data=train)
 plt.gca().set_title('SibSp count', fontsize=15);
 
 
-# In[25]:
+# In[83]:
 
 
 g = sns.catplot(x="SibSp", y="Survived", data=train, kind="bar", palette="deep", 
@@ -229,20 +243,20 @@ for p in ax.patches:
 
 # ## Parch
 
-# In[26]:
+# In[84]:
 
 
 eda.get_count_percentage(train, 'Parch')
 
 
-# In[27]:
+# In[85]:
 
 
 sns.countplot(y='Parch', hue='Sex', data=train)
 plt.gca().set_title('Parch count', fontsize=15);
 
 
-# In[28]:
+# In[86]:
 
 
 g = sns.catplot(x="Parch", y="Survived", data=train, kind="bar", palette="deep", 
@@ -258,14 +272,14 @@ for p in ax.patches:
 
 # ## FamilySize
 
-# In[29]:
+# In[87]:
 
 
 train['FamilySize'] = train['SibSp'] + train['Parch'] + 1
 eda.get_count_percentage(train, 'FamilySize')
 
 
-# In[30]:
+# In[88]:
 
 
 g = sns.catplot(x="FamilySize", y="Survived", data=train, kind="bar", palette="deep", 
@@ -281,27 +295,27 @@ for p in ax.patches:
 
 # ## Embarked
 
-# In[31]:
+# In[89]:
 
 
 eda.get_count_percentage(train, 'Embarked')
 
 
-# In[32]:
+# In[90]:
 
 
 sns.countplot(y='Embarked', hue='Sex', data=train)
 plt.gca().set_title('Embarked count vs Sex', fontsize=15);
 
 
-# In[33]:
+# In[91]:
 
 
 sns.countplot(y='Embarked', hue='Pclass', data=train)
 plt.gca().set_title('Embarked count vs Pclass', fontsize=15);
 
 
-# In[34]:
+# In[92]:
 
 
 g = sns.catplot(x="Embarked", y="Survived", hue='Sex', data=train, kind="bar", palette="deep", 
@@ -315,7 +329,7 @@ for p in ax.patches:
             fontsize=13, ha='center', va='bottom')
 
 
-# In[35]:
+# In[93]:
 
 
 g = sns.FacetGrid(train, row='Embarked', col='Pclass', height=2.2, aspect=1.9)
@@ -326,33 +340,33 @@ plt.gcf().suptitle('Survival rate vs Sex vs Embarked vs Pclass', fontsize=15);
 
 # ## Deck
 
-# In[36]:
+# In[94]:
 
 
 has_cabin = train.loc[~train['Cabin'].isnull(), :]
 has_cabin.head()
 
 
-# In[37]:
+# In[95]:
 
 
 eda.get_count_percentage(has_cabin, 'Pclass')
 
 
-# In[38]:
+# In[96]:
 
 
 eda.get_count_percentage(has_cabin, 'Sex')
 
 
-# In[39]:
+# In[97]:
 
 
 deck = train['Cabin'].apply(lambda x: ''.join(re.findall("[a-zA-Z]+", str(x))))
 deck.value_counts()
 
 
-# In[40]:
+# In[98]:
 
 
 train['Deck'] = train['Cabin'].str.extract(r'([A-Z])+', expand=False)
@@ -360,14 +374,14 @@ train['Deck'].fillna('X', inplace=True)
 train['Deck'].value_counts()
 
 
-# In[41]:
+# In[99]:
 
 
 sns.countplot(x='Deck', data=train)
 plt.gca().set_title('Deck count', fontsize=15);
 
 
-# In[42]:
+# In[100]:
 
 
 g = sns.catplot(x="Deck", y="Survived", data=train, kind="bar", palette="deep", 
@@ -383,14 +397,14 @@ for p in ax.patches:
 
 # ## Age
 
-# In[43]:
+# In[101]:
 
 
 sns.distplot(train['Age'][~train['Age'].isnull()])
 plt.gca().set_title('Distplot of Age', fontsize=15);
 
 
-# In[44]:
+# In[102]:
 
 
 g = sns.FacetGrid(train, col='Survived', height=4, aspect=1.5)
@@ -399,7 +413,7 @@ g.fig.subplots_adjust(top=.85)
 plt.gcf().suptitle('Distplot of Age vs Survived', fontsize=15);
 
 
-# In[45]:
+# In[103]:
 
 
 g = sns.FacetGrid(train, row='Sex', col='Survived', height=3, aspect=2)
@@ -408,7 +422,7 @@ g.fig.subplots_adjust(top=.87)
 plt.gcf().suptitle('Distplot of Age vs Survived vs Sex', fontsize=15);
 
 
-# In[46]:
+# In[104]:
 
 
 g = sns.FacetGrid(train, row='Pclass', col='Survived', height=3, aspect=2)
@@ -417,7 +431,7 @@ g.fig.subplots_adjust(top=.91)
 plt.gcf().suptitle('Distplot of Age vs Survived vs Pclass', fontsize=15);
 
 
-# In[47]:
+# In[105]:
 
 
 train['Age'].describe()
@@ -425,7 +439,7 @@ train['Age'].describe()
 
 # ## AgeBin
 
-# In[48]:
+# In[106]:
 
 
 train['Age'].fillna(train['Age'].median(), inplace=True)
@@ -433,14 +447,14 @@ train['AgeBin'] = pd.cut(train['Age'], 10)
 eda.get_count_percentage(train, 'AgeBin')
 
 
-# In[49]:
+# In[107]:
 
 
 sns.countplot(x='AgeBin', data=train)
 plt.gca().set_title('AgeBin count', fontsize=15);
 
 
-# In[50]:
+# In[108]:
 
 
 sns.barplot(x='AgeBin', y='Survived', data=train)
@@ -450,13 +464,13 @@ plt.gca().set_title('Survival rate vs AgeBin', fontsize=15);
 
 # ## Fare
 
-# In[51]:
+# In[109]:
 
 
 train['Fare'].describe()
 
 
-# In[52]:
+# In[110]:
 
 
 fig, ax = plt.subplots(nrows=1, ncols=2, figsize=[15, 4])
@@ -465,7 +479,7 @@ sns.distplot(np.log1p(train['Fare']), ax=ax[1], axlabel='Log1p Fare')
 fig.suptitle('Distplots of Fare vs Log1p Fare');
 
 
-# In[53]:
+# In[111]:
 
 
 fig, ax = plt.subplots(nrows=2, ncols=1, sharex=True, figsize=[15, 6])
@@ -477,7 +491,7 @@ ax[0].set_title('Stripplot of Fare vs Pclass', fontsize=15)
 ax[1].set_title('Boxenplot of Fare vs Pclass', fontsize=15);
 
 
-# In[54]:
+# In[112]:
 
 
 g = sns.catplot(x='SibSp', y='Fare', col='Pclass', data=train, kind='strip', 
@@ -489,7 +503,7 @@ sns.catplot(x='SibSp', y='Fare', col='Pclass', data=train, kind='boxen',
                 sharey=False, height=4, aspect=1);
 
 
-# In[55]:
+# In[113]:
 
 
 g = sns.catplot(x='Parch', y='Fare', col='Pclass', data=train, kind='strip', 
@@ -503,7 +517,7 @@ sns.catplot(x='Parch', y='Fare', col='Pclass', data=train, kind='boxen',
 
 # ## Correlation
 
-# In[57]:
+# In[114]:
 
 
 importlib.reload(eda)
@@ -511,17 +525,17 @@ eda.association_test(train.loc[:, ['Pclass', 'Sex', 'Age', 'SibSp',
                                    'Parch', 'FamilySize', 'Fare', 'Embarked']], train['Survived'])
 
 
-# In[59]:
+# In[115]:
 
 
 train['SexNum'] = train['Sex'].replace({'male': 1, 'female': 0}).astype(int)
 train['SexNum'].head()
 
 
-# In[9]:
+# In[116]:
 
 
-CORR_COLS = ['Survived', 'Pclass', 'Fare', 'SibSp', 'FamilySize', 'Parch', 'Age', 'SexNum']
+CORR_COLS = ['Survived', 'Pclass', 'Fare', 'SibSp', 'Parch', 'FamilySize', 'Age', 'SexNum']
 fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(15, 6))
 sns.heatmap(train[CORR_COLS].corr(method='pearson'), 
             ax=ax[0], cbar=True, annot=True, square=True, fmt='.2f', annot_kws={'size': 12})
@@ -535,7 +549,7 @@ fig.subplots_adjust(top=.92);
 
 # ## Save as .py
 
-# In[56]:
+# In[117]:
 
 
 get_ipython().system('jupyter nbconvert --to script 01_exploratory_data_analysis.ipynb')
