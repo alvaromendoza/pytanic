@@ -26,6 +26,8 @@ def add_title(df):
     df['Title'].replace('Mlle', 'Miss', inplace=True)
     df['Title'].replace('Ms', 'Miss', inplace=True)
     df['Title'].replace('Mme', 'Mrs', inplace=True)
+    title_other_filter = ~df['Title'].isin(['Mr', 'Master', 'Mrs', 'Miss'])
+    df.loc[title_other_filter, 'Title'] = 'Other'
 
 
 def add_familysize(df):
