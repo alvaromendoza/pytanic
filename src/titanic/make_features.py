@@ -86,6 +86,7 @@ def make_features():
     transform_object_to_categorical(X_train, X_test)
     serialize_features(X_train, r'../../data/processed/X_train.pickle')
     serialize_features(X_test, r'../../data/processed/X_test.pickle')
+    serialize_features(y_train, r'../../data/processed/y_train.pickle')
     return X_train, X_test, y_train
 
 
