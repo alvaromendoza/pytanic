@@ -5,7 +5,7 @@
 
 # ## IPython magics
 
-# In[62]:
+# In[ ]:
 
 
 get_ipython().run_line_magic('matplotlib', 'inline')
@@ -13,7 +13,7 @@ get_ipython().run_line_magic('matplotlib', 'inline')
 
 # ## Imports
 
-# In[63]:
+# In[ ]:
 
 
 import importlib
@@ -29,8 +29,7 @@ import scipy.stats as stats
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import seaborn as sns; sns.set()
-import titanic.exploratory_data_analysis as eda
-importlib.reload(eda)
+import titanic.analysis as an
 
 pd.options.display.max_columns = None
 pd.options.display.max_rows = None
@@ -38,31 +37,33 @@ pd.options.display.max_colwidth = -1
 
 plt.rcParams['figure.figsize'] = [15, 4.5]
 
+importlib.reload(an);
+
 
 # ## Load data
 
-# In[64]:
+# In[ ]:
 
 
 train = pd.read_csv('../data/raw/train.csv')
 train.head(15)
 
 
-# In[65]:
+# In[ ]:
 
 
 train.info()
 print('train.shape:', train.shape)
 
 
-# In[119]:
+# In[ ]:
 
 
 test = pd.read_csv('../data/raw/test.csv')
 test.head()
 
 
-# In[66]:
+# In[ ]:
 
 
 data_dict = pd.read_excel('../references/data_dict.xlsx')
@@ -71,29 +72,27 @@ data_dict
 
 # ## Missing values
 
-# In[67]:
+# In[ ]:
 
 
-importlib.reload(eda)
-eda.get_nan_counts(train)
+an.get_nan_counts(train)
 
 
-# In[120]:
+# In[ ]:
 
 
-importlib.reload(eda)
-eda.get_nan_counts(test)
+an.get_nan_counts(test)
 
 
 # ## Survived
 
-# In[68]:
+# In[ ]:
 
 
-eda.get_count_percentage(train, 'Survived', sort='count')
+an.get_count_percentage(train, 'Survived', sort='count')
 
 
-# In[69]:
+# In[ ]:
 
 
 sns.countplot(y='Survived', data=train)
@@ -102,20 +101,20 @@ plt.gcf().suptitle('Survival count', fontsize=15);
 
 # ## Pclass
 
-# In[70]:
+# In[ ]:
 
 
-eda.get_count_percentage(train, 'Pclass')
+an.get_count_percentage(train, 'Pclass')
 
 
-# In[71]:
+# In[ ]:
 
 
 sns.countplot(y='Pclass', data=train)
 plt.gca().set_title('Pclass count', fontsize=15);
 
 
-# In[72]:
+# In[ ]:
 
 
 g = sns.catplot(x="Pclass", y="Survived", data=train, kind="bar", palette="deep", 
@@ -129,7 +128,7 @@ for p in ax.patches:
             fontsize=13, ha='center', va='bottom')
 
 
-# In[73]:
+# In[ ]:
 
 
 g = sns.catplot(x="Pclass", y="Survived", hue='Sex', data=train, kind="bar", palette="deep", 
@@ -145,14 +144,14 @@ for p in ax.patches:
 
 # ## Title
 
-# In[74]:
+# In[ ]:
 
 
 train['Title'] = train['Name'].str.extract(' ([A-Za-z]+)\.', expand=False)
 pd.crosstab(train['Title'], train['Sex'])
 
 
-# In[75]:
+# In[ ]:
 
 
 train['Title'].replace('Mlle', 'Miss', inplace=True)
@@ -161,7 +160,7 @@ train['Title'].replace('Mme', 'Mrs', inplace=True)
 pd.crosstab(train['Title'], train['Sex'])
 
 
-# In[76]:
+# In[ ]:
 
 
 title_other_filter = ~train['Title'].isin(['Mr', 'Master', 'Mrs', 'Miss'])
@@ -169,7 +168,7 @@ train.loc[title_other_filter, 'Title'] = 'Other'
 pd.crosstab(train['Title'], train['Sex'])
 
 
-# In[77]:
+# In[ ]:
 
 
 g = sns.catplot(x="Title", y="Survived", data=train, kind="bar", palette="deep", 
@@ -185,20 +184,20 @@ for p in ax.patches:
 
 # ## Sex
 
-# In[78]:
+# In[ ]:
 
 
-eda.get_count_percentage(train, 'Sex')
+an.get_count_percentage(train, 'Sex')
 
 
-# In[79]:
+# In[ ]:
 
 
 sns.countplot(y='Sex', data=train)
 plt.gca().set_title('Sex count', fontsize=15);
 
 
-# In[80]:
+# In[ ]:
 
 
 g = sns.catplot(x="Sex", y="Survived", data=train, kind="bar", palette="deep", 
@@ -214,20 +213,20 @@ for p in ax.patches:
 
 # ## SibSp
 
-# In[81]:
+# In[ ]:
 
 
-eda.get_count_percentage(train, 'SibSp')
+an.get_count_percentage(train, 'SibSp')
 
 
-# In[82]:
+# In[ ]:
 
 
 sns.countplot(y='SibSp', data=train)
 plt.gca().set_title('SibSp count', fontsize=15);
 
 
-# In[83]:
+# In[ ]:
 
 
 g = sns.catplot(x="SibSp", y="Survived", data=train, kind="bar", palette="deep", 
@@ -243,20 +242,20 @@ for p in ax.patches:
 
 # ## Parch
 
-# In[84]:
+# In[ ]:
 
 
-eda.get_count_percentage(train, 'Parch')
+an.get_count_percentage(train, 'Parch')
 
 
-# In[85]:
+# In[ ]:
 
 
 sns.countplot(y='Parch', hue='Sex', data=train)
 plt.gca().set_title('Parch count', fontsize=15);
 
 
-# In[86]:
+# In[ ]:
 
 
 g = sns.catplot(x="Parch", y="Survived", data=train, kind="bar", palette="deep", 
@@ -272,14 +271,14 @@ for p in ax.patches:
 
 # ## FamilySize
 
-# In[87]:
+# In[ ]:
 
 
 train['FamilySize'] = train['SibSp'] + train['Parch'] + 1
-eda.get_count_percentage(train, 'FamilySize')
+an.get_count_percentage(train, 'FamilySize')
 
 
-# In[88]:
+# In[ ]:
 
 
 g = sns.catplot(x="FamilySize", y="Survived", data=train, kind="bar", palette="deep", 
@@ -295,27 +294,27 @@ for p in ax.patches:
 
 # ## Embarked
 
-# In[89]:
+# In[ ]:
 
 
-eda.get_count_percentage(train, 'Embarked')
+an.get_count_percentage(train, 'Embarked')
 
 
-# In[90]:
+# In[ ]:
 
 
 sns.countplot(y='Embarked', hue='Sex', data=train)
 plt.gca().set_title('Embarked count vs Sex', fontsize=15);
 
 
-# In[91]:
+# In[ ]:
 
 
 sns.countplot(y='Embarked', hue='Pclass', data=train)
 plt.gca().set_title('Embarked count vs Pclass', fontsize=15);
 
 
-# In[92]:
+# In[ ]:
 
 
 g = sns.catplot(x="Embarked", y="Survived", hue='Sex', data=train, kind="bar", palette="deep", 
@@ -329,7 +328,7 @@ for p in ax.patches:
             fontsize=13, ha='center', va='bottom')
 
 
-# In[93]:
+# In[ ]:
 
 
 g = sns.FacetGrid(train, row='Embarked', col='Pclass', height=2.2, aspect=1.9)
@@ -340,33 +339,33 @@ plt.gcf().suptitle('Survival rate vs Sex vs Embarked vs Pclass', fontsize=15);
 
 # ## Deck
 
-# In[94]:
+# In[ ]:
 
 
 has_cabin = train.loc[~train['Cabin'].isnull(), :]
 has_cabin.head()
 
 
-# In[95]:
+# In[ ]:
 
 
-eda.get_count_percentage(has_cabin, 'Pclass')
+an.get_count_percentage(has_cabin, 'Pclass')
 
 
-# In[96]:
+# In[ ]:
 
 
-eda.get_count_percentage(has_cabin, 'Sex')
+an.get_count_percentage(has_cabin, 'Sex')
 
 
-# In[97]:
+# In[ ]:
 
 
 deck = train['Cabin'].apply(lambda x: ''.join(re.findall("[a-zA-Z]+", str(x))))
 deck.value_counts()
 
 
-# In[98]:
+# In[ ]:
 
 
 train['Deck'] = train['Cabin'].str.extract(r'([A-Z])+', expand=False)
@@ -374,14 +373,14 @@ train['Deck'].fillna('X', inplace=True)
 train['Deck'].value_counts()
 
 
-# In[99]:
+# In[ ]:
 
 
 sns.countplot(x='Deck', data=train)
 plt.gca().set_title('Deck count', fontsize=15);
 
 
-# In[100]:
+# In[ ]:
 
 
 g = sns.catplot(x="Deck", y="Survived", data=train, kind="bar", palette="deep", 
@@ -397,14 +396,14 @@ for p in ax.patches:
 
 # ## Age
 
-# In[101]:
+# In[ ]:
 
 
 sns.distplot(train['Age'][~train['Age'].isnull()])
 plt.gca().set_title('Distplot of Age', fontsize=15);
 
 
-# In[102]:
+# In[ ]:
 
 
 g = sns.FacetGrid(train, col='Survived', height=4, aspect=1.5)
@@ -413,7 +412,7 @@ g.fig.subplots_adjust(top=.85)
 plt.gcf().suptitle('Distplot of Age vs Survived', fontsize=15);
 
 
-# In[103]:
+# In[ ]:
 
 
 g = sns.FacetGrid(train, row='Sex', col='Survived', height=3, aspect=2)
@@ -422,7 +421,7 @@ g.fig.subplots_adjust(top=.87)
 plt.gcf().suptitle('Distplot of Age vs Survived vs Sex', fontsize=15);
 
 
-# In[104]:
+# In[ ]:
 
 
 g = sns.FacetGrid(train, row='Pclass', col='Survived', height=3, aspect=2)
@@ -431,7 +430,7 @@ g.fig.subplots_adjust(top=.91)
 plt.gcf().suptitle('Distplot of Age vs Survived vs Pclass', fontsize=15);
 
 
-# In[105]:
+# In[ ]:
 
 
 train['Age'].describe()
@@ -439,22 +438,22 @@ train['Age'].describe()
 
 # ## AgeBin
 
-# In[106]:
+# In[ ]:
 
 
 train['Age'].fillna(train['Age'].median(), inplace=True)
 train['AgeBin'] = pd.cut(train['Age'], 10)
-eda.get_count_percentage(train, 'AgeBin')
+an.get_count_percentage(train, 'AgeBin')
 
 
-# In[107]:
+# In[ ]:
 
 
 sns.countplot(x='AgeBin', data=train)
 plt.gca().set_title('AgeBin count', fontsize=15);
 
 
-# In[108]:
+# In[ ]:
 
 
 sns.barplot(x='AgeBin', y='Survived', data=train)
@@ -464,13 +463,13 @@ plt.gca().set_title('Survival rate vs AgeBin', fontsize=15);
 
 # ## Fare
 
-# In[109]:
+# In[ ]:
 
 
 train['Fare'].describe()
 
 
-# In[110]:
+# In[ ]:
 
 
 fig, ax = plt.subplots(nrows=1, ncols=2, figsize=[15, 4])
@@ -479,7 +478,7 @@ sns.distplot(np.log1p(train['Fare']), ax=ax[1], axlabel='Log1p Fare')
 fig.suptitle('Distplots of Fare vs Log1p Fare');
 
 
-# In[111]:
+# In[ ]:
 
 
 fig, ax = plt.subplots(nrows=2, ncols=1, sharex=True, figsize=[15, 6])
@@ -491,7 +490,7 @@ ax[0].set_title('Stripplot of Fare vs Pclass', fontsize=15)
 ax[1].set_title('Boxenplot of Fare vs Pclass', fontsize=15);
 
 
-# In[112]:
+# In[ ]:
 
 
 g = sns.catplot(x='SibSp', y='Fare', col='Pclass', data=train, kind='strip', 
@@ -503,7 +502,7 @@ sns.catplot(x='SibSp', y='Fare', col='Pclass', data=train, kind='boxen',
                 sharey=False, height=4, aspect=1);
 
 
-# In[113]:
+# In[ ]:
 
 
 g = sns.catplot(x='Parch', y='Fare', col='Pclass', data=train, kind='strip', 
@@ -517,22 +516,21 @@ sns.catplot(x='Parch', y='Fare', col='Pclass', data=train, kind='boxen',
 
 # ## Correlation
 
-# In[114]:
+# In[ ]:
 
 
-importlib.reload(eda)
-eda.association_test(train.loc[:, ['Pclass', 'Sex', 'Age', 'SibSp',
+an.association_test(train.loc[:, ['Pclass', 'Sex', 'Age', 'SibSp',
                                    'Parch', 'FamilySize', 'Fare', 'Embarked']], train['Survived'])
 
 
-# In[115]:
+# In[ ]:
 
 
 train['SexNum'] = train['Sex'].replace({'male': 1, 'female': 0}).astype(int)
 train['SexNum'].head()
 
 
-# In[116]:
+# In[ ]:
 
 
 CORR_COLS = ['Survived', 'Pclass', 'Fare', 'SibSp', 'Parch', 'FamilySize', 'Age', 'SexNum']
@@ -549,7 +547,7 @@ fig.subplots_adjust(top=.92);
 
 # ## Save as .py
 
-# In[117]:
+# In[130]:
 
 
 get_ipython().system('jupyter nbconvert --to script 01_exploratory_data_analysis.ipynb')
