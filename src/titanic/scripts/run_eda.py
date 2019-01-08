@@ -52,4 +52,4 @@ def run_notebook(notebook_path):
 
 
 if __name__ == '__main__':
-    run_notebook('../../notebooks/pups.ipynb')
+    run_notebook('../../../notebooks/pups.ipynb')

@@ -1,4 +1,4 @@
-"""Utility functions for exploratory data analysis."""
+"""Analytical utility functions"""
 
 import numpy as np
 import pandas as pd
