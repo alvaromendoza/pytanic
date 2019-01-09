@@ -3,15 +3,18 @@
 import time
 import datetime
 import pickle
+import logging
 import numpy as np
 import pandas as pd
 import titanic.tools as tools
 
+from pathlib import Path
 from sklearn.base import BaseEstimator, TransformerMixin, ClassifierMixin
 from sklearn.model_selection import cross_val_score, cross_val_predict
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import make_pipeline
 from sklearn.linear_model import LogisticRegression
+from titanic.config import PROJECT_ROOT_ABS_PATH
 
 
 class SimpleDataFrameImputer(BaseEstimator, TransformerMixin):
@@ -62,6 +65,7 @@ class CrossValidatedClassifier(BaseEstimator, ClassifierMixin):
         self.init_params = clf.get_params()
         self.best_params = None
         self._params_strategy = 'init'
+        self.logger = logging.getLogger(__name__)
 
     def fit(self, X, y):
         self.clf.fit(X, y)
@@ -125,6 +129,27 @@ class CrossValidatedClassifier(BaseEstimator, ClassifierMixin):
     def serialize(self, file_path):
         tools.serialize(self, file_path=file_path)
 
+    @classmethod
+    def train(cls, clf, X, y, param_grid=None, param_strategy='init', logdir_name=None, serialize_to=None):
+        model = cls(clf)
+        if param_grid is not None:
+            model.grid_search_cv(X, y, param_grid)
+            model.params_strategy = param_strategy
+        model.cross_val_score(X, y)
+        if serialize_to is not None:
+            model.serialize(serialize_to)
+        if logdir_name is not None:
+            logdir_path = PROJECT_ROOT_ABS_PATH / 'logs' / 'models' / logdir_name
+            logdir_path.mkdir(parents=True, exist_ok=True)
+            logfile_name = (model.cvs_history[1]['timestamp'] + r'.log').replace(r':', r'-')
+            file_handler = logging.FileHandler(logdir_path / logfile_name, mode='w')
+            model.logger.addHandler(file_handler)
+            model.logger.setLevel(logging.DEBUG)
+            model.logger.info(model.cvs_history)
+            file_handler.close()
+            model.logger.removeHandler(file_handler)
+        return model
+
 
 if __name__ == '__main__':
     with open(r'../../data/processed/X_train.pickle', 'rb') as f:
@@ -138,7 +163,7 @@ if __name__ == '__main__':
                          DataFrameDummifier(),
                          LogisticRegression()
                          )
-    logreg = CrossValidatedClassifier(pipe)
+#    logreg = CrossValidatedClassifier(pipe)
 #    y_train_predicted = logreg.fit(X_train, y_train).predict(X_train)
 #    print(y_train_predicted[:10])
 #    param_grid = {'clf__logisticregression__C': [0.5, 1, 2]}
@@ -148,7 +173,8 @@ if __name__ == '__main__':
 #    print(logreg.cross_val_score(X_train, y_train))
 #    logreg.cross_val_score(X_train, y_train)
     param_grid = {'logisticregression__C': [0.8, 1, 1.2]}
-    logreg.grid_search_cv(X_train, y_train, param_grid)
+#    logreg.grid_search_cv(X_train, y_train, param_grid)
+    logreg = CrossValidatedClassifier.train(pipe, X_train, y_train, param_grid, logdir_name='logreg')
 
 
 
