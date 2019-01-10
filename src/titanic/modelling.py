@@ -15,7 +15,6 @@ from sklearn.model_selection import cross_val_score, cross_val_predict
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import make_pipeline
 from sklearn.linear_model import LogisticRegression
-from titanic.config import PROJECT_ROOT_ABS_PATH
 
 
 class SimpleDataFrameImputer(BaseEstimator, TransformerMixin):
@@ -133,7 +132,7 @@ class CrossValidatedClassifier(BaseEstimator, ClassifierMixin):
     @classmethod
     def train(cls, clf, X, y, param_grid=None, param_strategy='init',
               print_cvs=True, print_gscv=True,
-              logdir_name=None, serialize_to=None, sklearn_gscv_kws=None,
+              logdir_path=None, serialize_to=None, sklearn_gscv_kws=None,
               sklearn_cvs_kws=None):
 
         # Counter mutable default kwargs
@@ -154,9 +153,9 @@ class CrossValidatedClassifier(BaseEstimator, ClassifierMixin):
             model.serialize(serialize_to)
 
         # Write logs
-        if logdir_name is not None:
+        if logdir_path is not None:
             logger = logging.getLogger(__name__ + '_' + cls.__name__ + '_train')
-            logdir_path = PROJECT_ROOT_ABS_PATH / 'logs' / 'models' / logdir_name
+            logdir_path = Path(logdir_path)
             logdir_path.mkdir(parents=True, exist_ok=True)
             logfile_name = (model.cvs_stamp['timestamp'] + r'.log').replace(r':', r'-')
             file_handler = logging.FileHandler(logdir_path / logfile_name, mode='w')
@@ -192,7 +191,7 @@ if __name__ == '__main__':
     param_grid = {'logisticregression__C': [0.8, 1, 1.2]}
 #    logreg.grid_search_cv(X_train, y_train, param_grid)
     logreg = CrossValidatedClassifier.train(pipe, X_train, y_train, param_grid,
-                                            logdir_name='logreg')
+                                            logdir_path='../../logs/models/logreg')
 
 
 
