@@ -5,6 +5,7 @@ import time
 import datetime
 import pickle
 import logging
+import pprint
 import numpy as np
 import pandas as pd
 import titanic.tools as tools
@@ -87,8 +88,7 @@ class CrossValidatedClassifier(BaseEstimator, ClassifierMixin):
         self.cvs_stamp['params_strategy'] = self._params_strategy
         self.cvs_stamp['clf_params'] = self.clf.get_params()
         if print_cvs:
-            print('\n-------------CROSS-VALIDATION-------------\n')
-            print(scoring, ': ', self.cvs_stamp['score'], sep='')
+            print('cross-validation ', scoring, ': ', self.cvs_stamp['score'], '\n', sep='')
         return score
 
     def grid_search_cv(self, X, y, param_grid, scoring='accuracy', print_gscv=True, **kwargs):
@@ -102,9 +102,8 @@ class CrossValidatedClassifier(BaseEstimator, ClassifierMixin):
             logger.setLevel(logging.INFO)
             handler = logging.StreamHandler(sys.stdout)
             logger.addHandler(handler)
-            logger.info('---------------GRID SEARCH----------------')
-            logger.info('\nbest_params:\n' + str(grid.best_params_))
-            logger.info('\nbest_score: ' + str(grid.best_score_))
+            logger.info('grid search best_params:\n' + str(grid.best_params_) + '\n')
+            logger.info('grid search best_score: ' + str(grid.best_score_) + '\n')
             handler.close()
             logger.removeHandler(handler)
         return grid.best_params_, grid.best_score_
@@ -155,11 +154,14 @@ class CrossValidatedClassifier(BaseEstimator, ClassifierMixin):
             logger = logging.getLogger(__name__ + '_' + cls.__name__ + '_train')
             logdir_path = Path(logdir_path)
             logdir_path.mkdir(parents=True, exist_ok=True)
-            logfile_name = (model.cvs_stamp['timestamp'] + r'.log').replace(r':', r'-')
+            logfile_name = (model.cvs_stamp['timestamp'] + ' ' +
+                            model.cvs_stamp['scoring'] + ' ' +
+                            str(model.cvs_stamp['score']) +
+                            r'.log').replace(r':', r'-')
             file_handler = logging.FileHandler(logdir_path / logfile_name, mode='w')
             logger.addHandler(file_handler)
             logger.setLevel(logging.INFO)
-            logger.info(model.cvs_stamp)
+            logger.info(pprint.pformat(model.cvs_stamp))
             file_handler.close()
             logger.removeHandler(file_handler)
         return model
