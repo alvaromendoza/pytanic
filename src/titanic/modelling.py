@@ -65,8 +65,6 @@ class CrossValidatedClassifier(BaseEstimator, ClassifierMixin):
         self.init_params = clf.get_params()
         self.best_params = None
         self._params_strategy = 'init'
-        self.logger = logging.getLogger(__name__ + '_' + self.__class__.__name__)
-        self.logger.setLevel(logging.INFO)
 
     def fit(self, X, y):
         self.clf.fit(X, y)
@@ -191,7 +189,9 @@ if __name__ == '__main__':
     param_grid = {'logisticregression__C': [0.8, 1, 1.2]}
 #    logreg.grid_search_cv(X_train, y_train, param_grid)
     logreg = CrossValidatedClassifier.train(pipe, X_train, y_train, param_grid,
-                                            logdir_path='../../logs/models/logreg')
+                                            logdir_path='../../logs/models/logreg',
+                                            serialize_to='../../models/logreg.pickle')
+#    tools.serialize(CrossValidatedClassifier(pipe), '../../models/logreg.pickle')
 
 
 
