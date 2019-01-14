@@ -90,8 +90,8 @@ data/external/*
 data/interim/*
 data/processed/*
 data/raw/*
-.log
-.pickle
+*.log
+*.pickle
 
 # Keep empty folders
 !*.gitkeep
