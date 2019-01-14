@@ -127,6 +127,14 @@ class ExtendedClassifier(BaseEstimator, ClassifierMixin):
         tools.serialize(self, file_path=file_path)
 
     @classmethod
+    def deserialize(cls, file_path):
+        obj = tools.deserialize(file_path=file_path)
+        if isinstance(obj, cls):
+            return obj
+        else:
+            raise TypeError(f'Deserialized object must be an instance of class {cls.__name__}')
+
+    @classmethod
     def cross_validate(cls, clf, X, y, param_grid=None, param_strategy='init',
                        print_cvs=True, print_gscv=True,
                        logdir_path=None, serialize_to=None, sklearn_gscv_kws=None,
@@ -193,6 +201,8 @@ if __name__ == '__main__':
     logreg = ExtendedClassifier.cross_validate(pipe, X_train, y_train, param_grid,
                                                logdir_path='../../logs/models/logreg',
                                                serialize_to='../../models/logreg.pickle')
+#    pups = ExtendedClassifier.deserialize(r'../../models/logreg.pickle')
+#    print(type(pups))
 #    tools.serialize(ExtendedClassifier(pipe), '../../models/logreg.pickle')
 
 
