@@ -93,5 +93,9 @@ data/raw/*
 *.log
 *.pickle
 
+# Dummy files and scratchpads
+*dummy*
+*scratch*
+
 # Keep empty folders
 !*.gitkeep
