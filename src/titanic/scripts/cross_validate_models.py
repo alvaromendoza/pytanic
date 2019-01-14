@@ -27,7 +27,7 @@ from sklearn.svm import SVC
 
 def cross_validate_logreg():
     print('================ LogisticRegression ================\n')
-    pipes['logreg'] = make_pipeline(SimpleDataFrameImputer(median_cols=['Age'],
+    pipes['logreg'] = make_pipeline(SimpleDataFrameImputer(median_cols=['Age', 'Fare'],
                                                            mode_cols=['Embarked']),
                                     DataFrameDummifier(),
                                     LogisticRegression())
@@ -44,7 +44,7 @@ def cross_validate_logreg():
 
 def cross_validate_forest(random_search=False):
     print('================ RandomForestClassifier ================\n')
-    pipes['forest'] = make_pipeline(SimpleDataFrameImputer(median_cols=['Age'],
+    pipes['forest'] = make_pipeline(SimpleDataFrameImputer(median_cols=['Age', 'Fare'],
                                                            mode_cols=['Embarked']),
                                     DataFrameDummifier(),
                                     RandomForestClassifier(**{'bootstrap': True,
@@ -88,7 +88,7 @@ def cross_validate_forest(random_search=False):
 
 def cross_validate_svc():
     print('================ SVC ================\n')
-    pipes['svc'] = make_pipeline(SimpleDataFrameImputer(median_cols=['Age'],
+    pipes['svc'] = make_pipeline(SimpleDataFrameImputer(median_cols=['Age', 'Fare'],
                                                         mode_cols=['Embarked']),
                                  DataFrameDummifier(),
                                  SVC(kernel='linear', C=0.1))
