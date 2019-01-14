@@ -34,11 +34,11 @@ def cross_validate_logreg():
     grids['logreg'] = {'logisticregression__C': [0.01, 0.1, 0.5, 0.8, 1, 1.2, 2, 5, 10]}
     grids['logreg'] = {'logisticregression__C': [0.6, 0.75, 0.8, 0.85, 0.9]}
 
-    logreg = ExtendedClassifier.train(pipes['logreg'], X_train, y_train, grids['logreg'],
-                                            sklearn_cvs_kws={'cv': kfolds},
-                                            param_strategy='best',
-                                            logdir_path=r'../../../logs/models/logreg',
-                                            serialize_to=r'../../../models/logreg.pickle')
+    logreg = ExtendedClassifier.cross_validate(pipes['logreg'], X_train, y_train, grids['logreg'],
+                                               sklearn_cvs_kws={'cv': kfolds},
+                                               param_strategy='best',
+                                               logdir_path=r'../../../logs/models/logreg',
+                                               serialize_to=r'../../../models/logreg.pickle')
     return logreg
 
 
@@ -78,11 +78,11 @@ def cross_validate_forest(random_search=False):
         print('randsearch.fit execution time:', finish - start)
         pprint.pprint(randsearch.best_params_)
 
-    forest = ExtendedClassifier.train(pipes['forest'], X_train, y_train,
-                                            sklearn_cvs_kws={'cv': kfolds},
-                                            param_strategy='init',
-                                            logdir_path=r'../../../logs/models/forest',
-                                            serialize_to=r'../../../models/forest.pickle')
+    forest = ExtendedClassifier.cross_validate(pipes['forest'], X_train, y_train,
+                                               sklearn_cvs_kws={'cv': kfolds},
+                                               param_strategy='init',
+                                               logdir_path=r'../../../logs/models/forest',
+                                               serialize_to=r'../../../models/forest.pickle')
     return forest
 
 
@@ -97,11 +97,11 @@ def cross_validate_svc():
 
     grids['svc'] = {'svc__C': C, 'svc__gamma': gamma}
 
-    svc = ExtendedClassifier.train(pipes['svc'], X_train, y_train,
-                                         sklearn_cvs_kws={'cv': kfolds},
-                                         param_strategy='init',
-                                         logdir_path=r'../../../logs/models/svc',
-                                         serialize_to=r'../../../models/svc.pickle')
+    svc = ExtendedClassifier.cross_validate(pipes['svc'], X_train, y_train,
+                                            sklearn_cvs_kws={'cv': kfolds},
+                                            param_strategy='init',
+                                            logdir_path=r'../../../logs/models/svc',
+                                            serialize_to=r'../../../models/svc.pickle')
     return svc
 
 

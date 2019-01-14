@@ -127,10 +127,10 @@ class ExtendedClassifier(BaseEstimator, ClassifierMixin):
         tools.serialize(self, file_path=file_path)
 
     @classmethod
-    def train(cls, clf, X, y, param_grid=None, param_strategy='init',
-              print_cvs=True, print_gscv=True,
-              logdir_path=None, serialize_to=None, sklearn_gscv_kws=None,
-              sklearn_cvs_kws=None):
+    def cross_validate(cls, clf, X, y, param_grid=None, param_strategy='init',
+                       print_cvs=True, print_gscv=True,
+                       logdir_path=None, serialize_to=None, sklearn_gscv_kws=None,
+                       sklearn_cvs_kws=None):
 
         # Counter mutable default kwargs
         if sklearn_gscv_kws is None:
@@ -190,9 +190,9 @@ if __name__ == '__main__':
 #    logreg.cross_val_score(X_train, y_train)
     param_grid = {'logisticregression__C': [0.8, 1, 1.2]}
 #    logreg.grid_search_cv(X_train, y_train, param_grid)
-    logreg = ExtendedClassifier.train(pipe, X_train, y_train, param_grid,
-                                      logdir_path='../../logs/models/logreg',
-                                      serialize_to='../../models/logreg.pickle')
+    logreg = ExtendedClassifier.cross_validate(pipe, X_train, y_train, param_grid,
+                                               logdir_path='../../logs/models/logreg',
+                                               serialize_to='../../models/logreg.pickle')
 #    tools.serialize(ExtendedClassifier(pipe), '../../models/logreg.pickle')
 
 
