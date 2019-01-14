@@ -90,6 +90,7 @@ data/external/*
 data/interim/*
 data/processed/*
 data/raw/*
+results/*
 *.log
 *.pickle
 
