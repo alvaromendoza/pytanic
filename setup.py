@@ -10,4 +10,7 @@ setup(
     description='Demo data science project using Titanic dataset from Kaggle.',
     author='Alvaro Mendoza',
     license='MIT',
+	entry_points={
+            'console_scripts': ['titanic=titanic.cli:cli']
+    }
 )
