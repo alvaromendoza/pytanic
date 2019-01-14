@@ -59,7 +59,7 @@ class DataFrameDummifier(BaseEstimator, TransformerMixin):
         return X
 
 
-class CrossValidatedClassifier(BaseEstimator, ClassifierMixin):
+class ExtendedClassifier(BaseEstimator, ClassifierMixin):
     def __init__(self, clf):
         self.clf = clf
         self.cvs_stamp = dict()
@@ -179,7 +179,7 @@ if __name__ == '__main__':
                          DataFrameDummifier(),
                          LogisticRegression()
                          )
-#    logreg = CrossValidatedClassifier(pipe)
+#    logreg = ExtendedClassifier(pipe)
 #    y_train_predicted = logreg.fit(X_train, y_train).predict(X_train)
 #    print(y_train_predicted[:10])
 #    param_grid = {'clf__logisticregression__C': [0.5, 1, 2]}
@@ -190,10 +190,10 @@ if __name__ == '__main__':
 #    logreg.cross_val_score(X_train, y_train)
     param_grid = {'logisticregression__C': [0.8, 1, 1.2]}
 #    logreg.grid_search_cv(X_train, y_train, param_grid)
-    logreg = CrossValidatedClassifier.train(pipe, X_train, y_train, param_grid,
-                                            logdir_path='../../logs/models/logreg',
-                                            serialize_to='../../models/logreg.pickle')
-#    tools.serialize(CrossValidatedClassifier(pipe), '../../models/logreg.pickle')
+    logreg = ExtendedClassifier.train(pipe, X_train, y_train, param_grid,
+                                      logdir_path='../../logs/models/logreg',
+                                      serialize_to='../../models/logreg.pickle')
+#    tools.serialize(ExtendedClassifier(pipe), '../../models/logreg.pickle')
 
 
 

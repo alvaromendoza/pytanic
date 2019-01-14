@@ -16,7 +16,7 @@ import time
 import pprint
 import numpy as np
 import titanic.tools as tools
-from titanic.modelling import SimpleDataFrameImputer, DataFrameDummifier, CrossValidatedClassifier
+from titanic.modelling import SimpleDataFrameImputer, DataFrameDummifier, ExtendedClassifier
 from sklearn.model_selection import KFold
 from sklearn.pipeline import make_pipeline
 from sklearn.model_selection import RandomizedSearchCV
@@ -34,7 +34,7 @@ def cross_validate_logreg():
     grids['logreg'] = {'logisticregression__C': [0.01, 0.1, 0.5, 0.8, 1, 1.2, 2, 5, 10]}
     grids['logreg'] = {'logisticregression__C': [0.6, 0.75, 0.8, 0.85, 0.9]}
 
-    logreg = CrossValidatedClassifier.train(pipes['logreg'], X_train, y_train, grids['logreg'],
+    logreg = ExtendedClassifier.train(pipes['logreg'], X_train, y_train, grids['logreg'],
                                             sklearn_cvs_kws={'cv': kfolds},
                                             param_strategy='best',
                                             logdir_path=r'../../../logs/models/logreg',
@@ -78,7 +78,7 @@ def cross_validate_forest(random_search=False):
         print('randsearch.fit execution time:', finish - start)
         pprint.pprint(randsearch.best_params_)
 
-    forest = CrossValidatedClassifier.train(pipes['forest'], X_train, y_train,
+    forest = ExtendedClassifier.train(pipes['forest'], X_train, y_train,
                                             sklearn_cvs_kws={'cv': kfolds},
                                             param_strategy='init',
                                             logdir_path=r'../../../logs/models/forest',
@@ -97,7 +97,7 @@ def cross_validate_svc():
 
     grids['svc'] = {'svc__C': C, 'svc__gamma': gamma}
 
-    svc = CrossValidatedClassifier.train(pipes['svc'], X_train, y_train,
+    svc = ExtendedClassifier.train(pipes['svc'], X_train, y_train,
                                          sklearn_cvs_kws={'cv': kfolds},
                                          param_strategy='init',
                                          logdir_path=r'../../../logs/models/svc',
