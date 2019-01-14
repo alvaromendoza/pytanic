@@ -47,9 +47,6 @@ coverage.xml
 *.mo
 *.pot
 
-# Django stuff:
-*.log
-
 # Snakemake
 .snakemake
 
@@ -78,13 +75,6 @@ target/
 # Jupyter NB Checkpoints
 .ipynb_checkpoints/
 
-# Exclude data from source control by default
-data/external/*
-data/interim/*
-data/processed/*
-data/raw/*
-!*.gitkeep
-
 # Backed-up old files
 .old
 
@@ -94,3 +84,14 @@ data/raw/*
 # vim
 *.swp
 *.swo
+
+# Automatically generated files
+data/external/*
+data/interim/*
+data/processed/*
+data/raw/*
+.log
+.pickle
+
+# Keep empty folders
+!*.gitkeep
