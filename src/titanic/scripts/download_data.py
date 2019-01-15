@@ -3,7 +3,7 @@
 from kaggle.api.kaggle_api_extended import KaggleApi
 
 
-def download_kaggle_titanic(path='../../../data/raw'):
+def download_kaggle_titanic(path=None):
     r"""Download Titanic dataset from Kaggle.
 
     To use this function, sign up for a Kaggle account athttps://www.kaggle.com.
@@ -29,4 +29,4 @@ def download_kaggle_titanic(path='../../../data/raw'):
 
 
 if __name__ == '__main__':
-    download_kaggle_titanic()
+    download_kaggle_titanic(r'data/raw')

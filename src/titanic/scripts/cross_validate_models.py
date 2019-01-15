@@ -37,8 +37,8 @@ def cross_validate_logreg():
     logreg = ExtendedClassifier.cross_validate(pipes['logreg'], X_train, y_train, grids['logreg'],
                                                sklearn_cvs_kws={'cv': kfolds},
                                                param_strategy='best',
-                                               logdir_path=r'../../../logs/models/logreg',
-                                               serialize_to=r'../../../models/logreg.pickle')
+                                               logdir_path=r'logs/models/logreg',
+                                               serialize_to=r'models/logreg.pickle')
     return logreg
 
 
@@ -81,8 +81,8 @@ def cross_validate_forest(random_search=False):
     forest = ExtendedClassifier.cross_validate(pipes['forest'], X_train, y_train,
                                                sklearn_cvs_kws={'cv': kfolds},
                                                param_strategy='init',
-                                               logdir_path=r'../../../logs/models/forest',
-                                               serialize_to=r'../../../models/forest.pickle')
+                                               logdir_path=r'logs/models/forest',
+                                               serialize_to=r'models/forest.pickle')
     return forest
 
 
@@ -100,8 +100,8 @@ def cross_validate_svc():
     svc = ExtendedClassifier.cross_validate(pipes['svc'], X_train, y_train,
                                             sklearn_cvs_kws={'cv': kfolds},
                                             param_strategy='init',
-                                            logdir_path=r'../../../logs/models/svc',
-                                            serialize_to=r'../../../models/svc.pickle')
+                                            logdir_path=r'logs/models/svc',
+                                            serialize_to=r'models/svc.pickle')
     return svc
 
 
@@ -109,9 +109,9 @@ if __name__ == '__main__':
 
     # Load data
 
-    X_train = tools.deserialize(r'../../../data/processed/X_train.pickle')
-    X_test = tools.deserialize(r'../../../data/processed/X_test.pickle')
-    y_train = tools.deserialize(r'../../../data/processed/y_train.pickle')
+    X_train = tools.deserialize(r'data/processed/X_train.pickle')
+    X_test = tools.deserialize(r'data/processed/X_test.pickle')
+    y_train = tools.deserialize(r'data/processed/y_train.pickle')
 
     # Create global objects
 

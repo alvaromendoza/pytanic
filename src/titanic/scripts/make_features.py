@@ -8,7 +8,7 @@ from pathlib import Path
 from pandas.api.types import CategoricalDtype
 
 
-def load_train_test(raw_data_path=r'../../../data/raw'):
+def load_train_test(raw_data_path=r'data/raw'):
     raw_data_path = Path(raw_data_path)
     train = pd.read_csv(raw_data_path.joinpath('train.csv'))
     test = pd.read_csv(raw_data_path.joinpath('test.csv'))
@@ -84,9 +84,9 @@ def make_features():
         recode_sex(df)
         drop_cols(df)
     transform_object_to_categorical(X_train, X_test)
-    serialize_features(X_train, r'../../../data/processed/X_train.pickle')
-    serialize_features(X_test, r'../../../data/processed/X_test.pickle')
-    serialize_features(y_train, r'../../../data/processed/y_train.pickle')
+    serialize_features(X_train, r'data/processed/X_train.pickle')
+    serialize_features(X_test, r'data/processed/X_test.pickle')
+    serialize_features(y_train, r'data/processed/y_train.pickle')
     return X_train, X_test, y_train
 
 
