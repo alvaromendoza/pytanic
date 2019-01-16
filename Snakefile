@@ -1,31 +1,69 @@
-from pathlib import Path
-
 rule all:
     input:
-        r"data\raw\gender_submission.csv",
-        r"data\raw\test.csv",
-        r"data\raw\train.csv",
+        r'notebooks\01_exploratory_data_analysis_dummy.py',
+        r'notebooks\02_compare_models_dummy.py',
+        r'results\submission.csv'
 
-rule download_data:
+rule download:
     output:
-        r"data\raw\gender_submission.csv",
-        r"data\raw\test.csv",
-        r"data\raw\train.csv"
+        r'data\raw\gender_submission.csv',
+        r'data\raw\test.csv',
+        r'data\raw\train.csv'
     shell:
-        "cd src\titanic & python download_data.py"
+        r'titanic download'
 
-rule run_eda:
+rule eda:
     input:
-        r"data\raw\train.csv",
-        r"notebooks\pups.ipynb"
+        r'data\raw\train.csv',
+        r'data\raw\test.csv',
+        r'references\data_dict.xlsx',
+        r'notebooks\01_exploratory_data_analysis_dummy.ipynb'
     output:
-        "notebooks\.snakemake\pups.tkn"
+        r'notebooks\01_exploratory_data_analysis_dummy.py'
     shell:
-        ''.join([
-                "mkdir notebooks\.snakemake & ",
-                "echo > notebooks\.snakemake\pups.tkn &",
-                "cd src/titanic & python run_eda.py"
-                ]) 
-#        r"mklink /H dummylink {input[1]}"
-#        r"mklink /H dummylink {input[1]} & cd src/titanic & python run_eda.py"
-#        r"cd src/titanic & python run_eda.py"
+        r'titanic eda'
+
+rule features:
+    input:
+        r'data\raw\test.csv',
+        r'data\raw\train.csv'
+    output:
+        r'data\processed\X_train.pickle',
+        r'data\processed\X_test.pickle',
+        r'data\processed\y_train.pickle'
+    shell:
+        r'titanic features'
+
+rule crossval:
+    input:
+        r'data\processed\X_train.pickle',
+        r'data\processed\y_train.pickle'
+    output:
+        r'models\logreg.pickle',
+        r'models\forest.pickle',
+        r'models\svc.pickle'
+    shell:
+        r'titanic crossval'
+
+rule compmod:
+    input:
+        r'models\logreg.pickle',
+        r'models\forest.pickle',
+        r'models\svc.pickle',
+        r'notebooks\02_compare_models_dummy.ipynb'
+    output:
+        r'notebooks\02_compare_models_dummy.py'
+    shell:
+        r'titanic compmod'
+
+rule submission:
+    input:
+        r'models\forest.pickle'
+    output:
+        r'results\submission.csv'
+    shell:
+        r'titanic submission'
+
+rule clean:
+    shell:
+        r'titanic clean -a'
