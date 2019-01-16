@@ -185,7 +185,7 @@ if __name__ == '__main__':
                          SimpleDataFrameImputer(median_cols=['Age'],
                                                 mode_cols=['Embarked']),
                          DataFrameDummifier(),
-                         LogisticRegression()
+                         LogisticRegression(solver='liblinear')
                          )
 #    logreg = ExtendedClassifier(pipe)
 #    y_train_predicted = logreg.fit(X_train, y_train).predict(X_train)
@@ -199,8 +199,8 @@ if __name__ == '__main__':
     param_grid = {'logisticregression__C': [0.8, 1, 1.2]}
 #    logreg.grid_search_cv(X_train, y_train, param_grid)
     logreg = ExtendedClassifier.cross_validate(pipe, X_train, y_train, param_grid,
-                                               logdir_path='../../logs/models/logreg',
-                                               serialize_to='../../models/logreg.pickle')
+                                               sklearn_gscv_kws={'cv': 3},
+                                               sklearn_cvs_kws={'cv': 5})
 #    pups = ExtendedClassifier.deserialize(r'../../models/logreg.pickle')
 #    print(type(pups))
 #    tools.serialize(ExtendedClassifier(pipe), '../../models/logreg.pickle')

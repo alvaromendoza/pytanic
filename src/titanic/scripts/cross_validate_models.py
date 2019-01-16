@@ -30,11 +30,12 @@ def cross_validate_logreg(X_train, y_train, pipes, grids, kfolds):
     pipes['logreg'] = make_pipeline(SimpleDataFrameImputer(median_cols=['Age', 'Fare'],
                                                            mode_cols=['Embarked']),
                                     DataFrameDummifier(),
-                                    LogisticRegression())
+                                    LogisticRegression(solver='liblinear'))
     grids['logreg'] = {'logisticregression__C': [0.01, 0.1, 0.5, 0.8, 1, 1.2, 2, 5, 10]}
     grids['logreg'] = {'logisticregression__C': [0.6, 0.75, 0.8, 0.85, 0.9]}
 
     logreg = ExtendedClassifier.cross_validate(pipes['logreg'], X_train, y_train, grids['logreg'],
+                                               sklearn_gscv_kws={'cv': 3},
                                                sklearn_cvs_kws={'cv': kfolds},
                                                param_strategy='best',
                                                logdir_path=r'logs/models/logreg',
