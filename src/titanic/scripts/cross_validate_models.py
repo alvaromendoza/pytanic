@@ -25,7 +25,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 
 
-def cross_validate_logreg():
+def cross_validate_logreg(X_train, y_train, pipes, grids, kfolds):
     print('================ LogisticRegression ================\n')
     pipes['logreg'] = make_pipeline(SimpleDataFrameImputer(median_cols=['Age', 'Fare'],
                                                            mode_cols=['Embarked']),
@@ -42,7 +42,7 @@ def cross_validate_logreg():
     return logreg
 
 
-def cross_validate_forest(random_search=False):
+def cross_validate_forest(X_train, y_train, pipes, grids, kfolds, random_search=False):
     print('================ RandomForestClassifier ================\n')
     pipes['forest'] = make_pipeline(SimpleDataFrameImputer(median_cols=['Age', 'Fare'],
                                                            mode_cols=['Embarked']),
@@ -86,7 +86,7 @@ def cross_validate_forest(random_search=False):
     return forest
 
 
-def cross_validate_svc():
+def cross_validate_svc(X_train, y_train, pipes, grids, kfolds):
     print('================ SVC ================\n')
     pipes['svc'] = make_pipeline(SimpleDataFrameImputer(median_cols=['Age', 'Fare'],
                                                         mode_cols=['Embarked']),
@@ -105,12 +105,10 @@ def cross_validate_svc():
     return svc
 
 
-if __name__ == '__main__':
-
+def cross_validate_models():
     # Load data
 
     X_train = tools.deserialize(r'data/processed/X_train.pickle')
-    X_test = tools.deserialize(r'data/processed/X_test.pickle')
     y_train = tools.deserialize(r'data/processed/y_train.pickle')
 
     # Create global objects
@@ -121,27 +119,10 @@ if __name__ == '__main__':
 
     # Train models
 
-    cross_validate_logreg()
-    cross_validate_forest()
-    cross_validate_svc()
+    cross_validate_logreg(X_train, y_train, pipes, grids, kfolds)
+    cross_validate_forest(X_train, y_train, pipes, grids, kfolds)
+    cross_validate_svc(X_train, y_train, pipes, grids, kfolds)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+if __name__ == '__main__':
+    cross_validate_models()

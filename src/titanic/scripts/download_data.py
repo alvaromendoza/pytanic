@@ -3,10 +3,10 @@
 from kaggle.api.kaggle_api_extended import KaggleApi
 
 
-def download_kaggle_titanic(path=None):
+def download_kaggle_titanic(path=r'data/raw'):
     r"""Download Titanic dataset from Kaggle.
 
-    To use this function, sign up for a Kaggle account athttps://www.kaggle.com.
+    To use this function, sign up for a Kaggle account at ``https://www.kaggle.com``.
     Then go to the 'Account' tab of your user profile
     (``https://www.kaggle.com/<username>/account``) and select 'Create API Token'.
     This will trigger the download ofkaggle.json, a file containing your API credentials.
@@ -29,4 +29,4 @@ def download_kaggle_titanic(path=None):
 
 
 if __name__ == '__main__':
-    download_kaggle_titanic(r'data/raw')
+    download_kaggle_titanic()
