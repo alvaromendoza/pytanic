@@ -53,11 +53,14 @@ def get_count_percentage(df, column, sort='count'):
     result['Percentage'] = result['Count'] / result['Count'].sum()
     if sort == 'count':
         sort_by = 'Count'
+        is_ascending = False
     elif sort == 'name':
         sort_by = column
+        is_ascending = True
     else:
         raise ValueError("Parameter 'sort' must be either 'count' or 'name'.")
-    result.sort_values(sort_by, inplace=True, ascending=False)
+    result.sort_values(sort_by, inplace=True, ascending=is_ascending)
+    result.reset_index(drop=True, inplace=True)
     return result
 
 
