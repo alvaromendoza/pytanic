@@ -77,3 +77,17 @@ def run_ipynb(file_path):
 
     file_path.rename(file_path_old)
     file_path_temp.rename(file_path)
+
+
+def print_header(header, capitalize=False, nl_before=False, nl_after=False,
+                 outline='=', outline_length=50):
+    nlb, nla = '', ''
+    if nl_before:
+        nlb = '\n'
+    if nl_after:
+        nla = '\n'
+    if capitalize:
+        header = header.upper()
+    print(nlb, outline*outline_length, sep='')
+    print(header)
+    print(outline*outline_length, nla, sep='')
