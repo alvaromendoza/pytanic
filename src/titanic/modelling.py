@@ -5,17 +5,18 @@ import time
 import datetime
 import pickle
 import logging
-import pprint
 import numpy as np
 import pandas as pd
 import titanic.tools as tools
 
 from pathlib import Path
-from sklearn.base import BaseEstimator, TransformerMixin, ClassifierMixin
+from pprint import pformat
+from sklearn.base import BaseEstimator, TransformerMixin, ClassifierMixin, clone
 from sklearn.model_selection import cross_val_score, cross_val_predict
 from sklearn.model_selection import GridSearchCV
-from sklearn.pipeline import make_pipeline
+from sklearn.pipeline import Pipeline, make_pipeline
 from sklearn.linear_model import LogisticRegression
+from titanic.tools import print_header
 
 
 class SimpleDataFrameImputer(BaseEstimator, TransformerMixin):
@@ -62,10 +63,14 @@ class DataFrameDummifier(BaseEstimator, TransformerMixin):
 class ExtendedClassifier(BaseEstimator, ClassifierMixin):
     def __init__(self, clf):
         self.clf = clf
-        self.cvs_stamp = dict()
+        self.profile = dict()
         self.init_params = clf.get_params()
         self.best_params = None
         self._params_strategy = 'init'
+        if isinstance(clf, Pipeline):
+            self.last_step_name = clf.steps[-1][1].__class__.__name__
+        else:
+            self.last_step_name = clf.__class__.__name__
 
     def fit(self, X, y):
         self.clf.fit(X, y)
@@ -79,22 +84,26 @@ class ExtendedClassifier(BaseEstimator, ClassifierMixin):
         start_time = time.time()
         score = cross_val_score(self.clf, X, y, scoring=scoring, **kwargs).mean()
         end_time = time.time()
-        self.cvs_stamp['timestamp'] = (datetime.datetime
-                                       .fromtimestamp(start_time)
-                                       .strftime('%Y-%m-%d %H:%M:%S'))
-        self.cvs_stamp['executed_in'] = end_time - start_time
-        self.cvs_stamp['scoring'] = scoring
-        self.cvs_stamp['score'] = score
-        self.cvs_stamp['params_strategy'] = self._params_strategy
-        self.cvs_stamp['clf_params'] = self.clf.get_params()
+        self.profile['cv_timestamp'] = (datetime.datetime
+                                        .fromtimestamp(start_time)
+                                        .strftime('%Y-%m-%d %H:%M:%S'))
+        self.profile['cv_executed_in'] = end_time - start_time
+        self.profile['cv_scoring'] = scoring
+        self.profile['cv_score'] = score
+        self.profile['params_strategy'] = self._params_strategy
+        self.profile['clf_params'] = self.clf.get_params()
         if print_cvs:
-            print('cross-validation ', scoring, ': ', self.cvs_stamp['score'], '\n', sep='')
+            print('cross-validation ', scoring, ': ', self.profile['cv_score'], sep='')
         return score
 
     def grid_search_cv(self, X, y, param_grid, scoring='accuracy', print_gscv=True, **kwargs):
         grid = GridSearchCV(self.clf, param_grid, scoring=scoring, **kwargs)
+        start_time = time.time()
         grid.fit(X, y)
+        end_time = time.time()
         self.best_params = grid.best_params_
+        self.profile['gs_best_params'] = grid.best_params_
+        self.profile['gs_executed_in'] = end_time - start_time
         if print_gscv:
             logger = logging.getLogger(__name__ + '_' +
                                        self.__class__.__name__ +
@@ -102,8 +111,8 @@ class ExtendedClassifier(BaseEstimator, ClassifierMixin):
             logger.setLevel(logging.INFO)
             handler = logging.StreamHandler(sys.stdout)
             logger.addHandler(handler)
-            logger.info('grid search best_params:\n' + str(grid.best_params_) + '\n')
-            logger.info('grid search best_score: ' + str(grid.best_score_) + '\n')
+            logger.info('grid search best_params:\n' + str(grid.best_params_))
+            logger.info('grid search best ' + scoring + ': ' + str(grid.best_score_))
             handler.close()
             logger.removeHandler(handler)
         return grid.best_params_, grid.best_score_
@@ -115,10 +124,10 @@ class ExtendedClassifier(BaseEstimator, ClassifierMixin):
     @params_strategy.setter
     def params_strategy(self, params_strategy):
         if params_strategy == 'init':
-            self.clf.set_params(**self.init_params)
+            self.clf = clone(self.clf).set_params(**self.init_params)
             self._params_strategy = 'init'
         elif params_strategy == 'best':
-            self.clf.set_params(**self.best_params)
+            self.clf = clone(self.clf).set_params(**self.best_params)
             self._params_strategy = 'best'
         else:
             raise ValueError("Attribute 'params_strategy' must be either 'init' or 'best'.")
@@ -134,6 +143,21 @@ class ExtendedClassifier(BaseEstimator, ClassifierMixin):
         else:
             raise TypeError(f'Deserialized object must be an instance of class {cls.__name__}')
 
+    def _dump_profile_to_log(self, logdir_path):
+        logger = logging.getLogger(__name__ + '_' + self.__class__.__name__)
+        logdir_path = Path(logdir_path)
+        logdir_path.mkdir(parents=True, exist_ok=True)
+        logfile_name = (self.profile['cv_timestamp'] + '_' +
+                        self.profile['cv_scoring'] + '_' +
+                        str(self.profile['cv_score']) +
+                        r'.log').replace(r':', r'-').replace(' ', '_')
+        file_handler = logging.FileHandler(logdir_path / logfile_name, mode='w')
+        logger.addHandler(file_handler)
+        logger.setLevel(logging.INFO)
+        logger.info(pformat(self.profile))
+        file_handler.close()
+        logger.removeHandler(file_handler)
+
     @classmethod
     def cross_validate(cls, clf, X, y, param_grid=None, param_strategy='init',
                        print_cvs=True, print_gscv=True,
@@ -148,6 +172,7 @@ class ExtendedClassifier(BaseEstimator, ClassifierMixin):
 
         # Train model
         model = cls(clf)
+        print_header(model.last_step_name)
         if param_grid is not None:
             model.grid_search_cv(X, y, param_grid, print_gscv=print_gscv, **sklearn_gscv_kws)
             model.params_strategy = param_strategy
@@ -157,21 +182,9 @@ class ExtendedClassifier(BaseEstimator, ClassifierMixin):
         if serialize_to is not None:
             model.serialize(serialize_to)
 
-        # Write logs
+        # Write log
         if logdir_path is not None:
-            logger = logging.getLogger(__name__ + '_' + cls.__name__ + '_train')
-            logdir_path = Path(logdir_path)
-            logdir_path.mkdir(parents=True, exist_ok=True)
-            logfile_name = (model.cvs_stamp['timestamp'] + ' ' +
-                            model.cvs_stamp['scoring'] + ' ' +
-                            str(model.cvs_stamp['score']) +
-                            r'.log').replace(r':', r'-')
-            file_handler = logging.FileHandler(logdir_path / logfile_name, mode='w')
-            logger.addHandler(file_handler)
-            logger.setLevel(logging.INFO)
-            logger.info(pprint.pformat(model.cvs_stamp))
-            file_handler.close()
-            logger.removeHandler(file_handler)
+            model._dump_profile_to_log(logdir_path)
         return model
 
 
@@ -200,7 +213,9 @@ if __name__ == '__main__':
 #    logreg.grid_search_cv(X_train, y_train, param_grid)
     logreg = ExtendedClassifier.cross_validate(pipe, X_train, y_train, param_grid,
                                                sklearn_gscv_kws={'cv': 3},
-                                               sklearn_cvs_kws={'cv': 5})
+                                               sklearn_cvs_kws={'cv': 5},
+                                               logdir_path=r'../../logs/models/logreg',
+                                               param_strategy='best')
 #    pups = ExtendedClassifier.deserialize(r'../../models/logreg.pickle')
 #    print(type(pups))
 #    tools.serialize(ExtendedClassifier(pipe), '../../models/logreg.pickle')
