@@ -61,14 +61,15 @@ def run_ipynb(file_path):
                          .with_suffix('.ipynb.old')
                          )
 
-    with open(file_path, 'r', encoding='utf-8') as nbf:
-        nbook = nbformat.read(nbf, as_version=4)
+    with open(file_path, 'r', encoding='utf-8') as nb:
+        nbook = nbformat.read(nb, as_version=4)
 
-    ep = ExecutePreprocessor(kernel_name=nbook.metadata.kernelspec.name)
+#    ep = ExecutePreprocessor(kernel_name=nbook.metadata.kernelspec.name)
+    ep = ExecutePreprocessor(kernel_name='python3')
     ep.preprocess(nbook, {'metadata': {'path': file_path.parent}})
 
-    with open(file_path_temp, 'w', encoding='utf-8') as nbf:
-        nbformat.write(nbook, nbf)
+    with open(file_path_temp, 'w', encoding='utf-8') as nb:
+        nbformat.write(nbook, nb)
 
     try:
         file_path_old.unlink()
