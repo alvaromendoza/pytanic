@@ -6,6 +6,7 @@ import pandas as pd
 
 from pathlib import Path
 from pandas.api.types import CategoricalDtype
+from titanic.tools import serialize
 
 
 def load_train_test(raw_data_path=r'data/raw'):
@@ -17,7 +18,7 @@ def load_train_test(raw_data_path=r'data/raw'):
 
 def split_X_y(df, y_col='Survived'):
     y = df[y_col].copy()
-    X = df.drop('Survived', axis=1, inplace=False)
+    X = df.drop(y_col, axis=1, inplace=False)
     return X, y
 
 
@@ -68,13 +69,9 @@ def transform_object_to_categorical(train_df, test_df):
             df[col] = df[col].astype(cat_type)
 
 
-def serialize_features(df, file_path=None):
-    with open(file_path, 'wb') as f:
-        pickle.dump(df, f)
-
-
 def make_features():
     train, test = load_train_test()
+    print('Train and test datasets loaded.')
     X_train, y_train = split_X_y(train)
     X_test = test
     for df in [X_train, X_test]:
@@ -84,9 +81,11 @@ def make_features():
         recode_sex(df)
         drop_cols(df)
     transform_object_to_categorical(X_train, X_test)
-    serialize_features(X_train, r'data/processed/X_train.pickle')
-    serialize_features(X_test, r'data/processed/X_test.pickle')
-    serialize_features(y_train, r'data/processed/y_train.pickle')
+    print('Transformations performed.')
+    serialize(X_train, r'data/processed/X_train.pickle')
+    serialize(X_test, r'data/processed/X_test.pickle')
+    serialize(y_train, r'data/processed/y_train.pickle')
+    print('DataFrames serialized.')
     return X_train, X_test, y_train
 
 
