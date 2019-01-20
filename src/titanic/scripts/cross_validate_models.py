@@ -16,13 +16,15 @@ import time
 import pprint
 import numpy as np
 import titanic.tools as tools
-from titanic.modelling import SimpleDataFrameImputer, DataFrameDummifier, ExtendedClassifier
+from titanic.modelling import SimpleDataFrameImputer, DataFrameDummifier, CategoricalToString
+from titanic.modelling import ExtendedClassifier
 from sklearn.model_selection import KFold
 from sklearn.pipeline import make_pipeline
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
+from category_encoders.ordinal import OrdinalEncoder
 
 
 def cross_validate_logreg(X_train, y_train, pipes, grids, kfolds):
@@ -43,9 +45,11 @@ def cross_validate_logreg(X_train, y_train, pipes, grids, kfolds):
 
 
 def cross_validate_forest(X_train, y_train, pipes, grids, kfolds, random_search=False):
-    pipes['forest'] = make_pipeline(SimpleDataFrameImputer(median_cols=['Age', 'Fare'],
+    pipes['forest'] = make_pipeline(CategoricalToString(),
+                                    SimpleDataFrameImputer(median_cols=['Age', 'Fare'],
                                                            mode_cols=['Embarked']),
-                                    DataFrameDummifier(),
+                                    OrdinalEncoder(cols=['Title', 'Deck', 'Embarked'],
+                                                   handle_unknown='impute'),
                                     RandomForestClassifier(**{'bootstrap': True,
                                                               'max_depth': 70,
                                                               'max_features': 'auto',

@@ -17,6 +17,20 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline, make_pipeline
 from sklearn.linear_model import LogisticRegression
 from titanic.tools import print_header
+from sklearn.ensemble import RandomForestClassifier
+from category_encoders.ordinal import OrdinalEncoder
+
+
+class CategoricalToString(BaseEstimator, TransformerMixin):
+    def fit(self, X, y=None):
+        assert isinstance(X, pd.DataFrame)
+        return self
+
+    def transform(self, X):
+        X = X.copy()
+        for c in X.select_dtypes(['category']).columns:
+            X[c] = X[c].astype(str)
+        return X
 
 
 class SimpleDataFrameImputer(BaseEstimator, TransformerMixin):
@@ -219,8 +233,25 @@ if __name__ == '__main__':
 #    pups = ExtendedClassifier.deserialize(r'../../models/logreg.pickle')
 #    print(type(pups))
 #    tools.serialize(ExtendedClassifier(pipe), '../../models/logreg.pickle')
-
-
+    pipe_forest = make_pipeline(CategoricalToString(),
+                                SimpleDataFrameImputer(median_cols=['Age', 'Fare'],
+                                                           mode_cols=['Embarked']),
+                                    OrdinalEncoder(cols=['Title', 'Deck', 'Embarked'],
+                                                   handle_unknown='impute',
+                                                   return_df=True),
+                                    RandomForestClassifier(**{'bootstrap': True,
+                                                              'max_depth': 70,
+                                                              'max_features': 'auto',
+                                                              'min_samples_leaf': 4,
+                                                              'min_samples_split': 10,
+                                                              'n_estimators': 64,
+                                                              'random_state': 100}))
+#    for c in ['Title', 'Deck', 'Embarked']:
+#        X_train[c] = X_train[c].astype(str)
+#    print(X_train.dtypes)
+    forest = ExtendedClassifier.cross_validate(pipe_forest, X_train, y_train,
+                                               sklearn_cvs_kws={'cv': 5},
+                                               param_strategy='init')
 
 
 
