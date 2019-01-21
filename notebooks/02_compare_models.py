@@ -5,7 +5,7 @@
 
 # ## IPython magics
 
-# In[22]:
+# In[ ]:
 
 
 get_ipython().run_line_magic('matplotlib', 'inline')
@@ -13,7 +13,7 @@ get_ipython().run_line_magic('matplotlib', 'inline')
 
 # ## Imports
 
-# In[23]:
+# In[ ]:
 
 
 import pandas as pd
@@ -33,32 +33,33 @@ plt.rcParams['figure.figsize'] = [15, 4.5]
 
 # ## Deserialize models
 
-# In[24]:
+# In[ ]:
 
 
 models = dict()
 models['LogisticRegression'] = ExtendedClassifier.deserialize(r'../models/logreg.pickle')
 models['RandomForestClassifier'] = ExtendedClassifier.deserialize(r'../models/forest.pickle')
 models['SVC'] = ExtendedClassifier.deserialize(r'../models/svc.pickle')
+models['VotingClassifier'] = ExtendedClassifier.deserialize(r'../models/voting.pickle')
 models
 
 
 # ## Compare models
 
-# In[25]:
+# In[ ]:
 
 
-scores = {name: model.cvs_stamp['score'] for name, model in models.items()}
+scores = {name: model.profile['cv_score'] for name, model in models.items()}
 scores
 
 
-# In[26]:
+# In[ ]:
 
 
 list(scores.keys())
 
 
-# In[27]:
+# In[ ]:
 
 
 fig = plt.figure(figsize=[15, 5])
@@ -75,7 +76,7 @@ plt.show()
 
 # ## Save as .py
 
-# In[29]:
+# In[8]:
 
 
 get_ipython().system('jupyter nbconvert --to script 02_compare_models.ipynb')

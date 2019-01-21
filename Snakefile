@@ -42,6 +42,7 @@ rule crossval:
         r'models\logreg.pickle',
         r'models\forest.pickle',
         r'models\svc.pickle'
+        r'models\voting.pickle'
     shell:
         r'titanic crossval'
 
@@ -50,6 +51,7 @@ rule compmod:
         r'models\logreg.pickle',
         r'models\forest.pickle',
         r'models\svc.pickle',
+        r'models\voting.pickle'
         r'notebooks\02_compare_models_dummy.ipynb'
     output:
         r'notebooks\02_compare_models_dummy.py'

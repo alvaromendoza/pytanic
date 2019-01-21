@@ -12,6 +12,7 @@ rn.seed(RANDOM_SEED)
 
 # Main imports
 
+import os
 import time
 import pprint
 import numpy as np
@@ -22,7 +23,7 @@ from sklearn.model_selection import KFold
 from sklearn.pipeline import make_pipeline
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, VotingClassifier
 from sklearn.svm import SVC
 from category_encoders.ordinal import OrdinalEncoder
 
@@ -93,7 +94,7 @@ def cross_validate_svc(X_train, y_train, pipes, grids, kfolds):
     pipes['svc'] = make_pipeline(SimpleDataFrameImputer(median_cols=['Age', 'Fare'],
                                                         mode_cols=['Embarked']),
                                  DataFrameDummifier(),
-                                 SVC(kernel='linear', C=0.1))
+                                 SVC(kernel='linear', C=0.1, probability=False))
     C = [0.001, 0.01, 0.1, 1, 10]
     gamma = [0.001, 0.01, 0.1, 1]
 
@@ -105,6 +106,17 @@ def cross_validate_svc(X_train, y_train, pipes, grids, kfolds):
                                             logdir_path=r'logs/models/svc',
                                             serialize_to=r'models/svc.pickle')
     return svc
+
+
+def cross_validate_voting(X_train, y_train, pipes, grids, kfolds):
+    estimators = [('logreg', pipes['logreg']), ('forest', pipes['forest']), ('svc', pipes['svc'])]
+    voting = ExtendedClassifier.cross_validate(VotingClassifier(estimators, voting='hard'),
+                                               X_train, y_train,
+                                               sklearn_cvs_kws={'cv': kfolds},
+                                               param_strategy='init',
+                                               logdir_path=r'logs/models/voting',
+                                               serialize_to=r'models/voting.pickle')
+    return voting
 
 
 def cross_validate_models():
@@ -124,7 +136,9 @@ def cross_validate_models():
     cross_validate_logreg(X_train, y_train, pipes, grids, kfolds)
     cross_validate_forest(X_train, y_train, pipes, grids, kfolds)
     cross_validate_svc(X_train, y_train, pipes, grids, kfolds)
+    cross_validate_voting(X_train, y_train, pipes, grids, kfolds)
 
 
 if __name__ == '__main__':
+    os.chdir(r'../../../')
     cross_validate_models()

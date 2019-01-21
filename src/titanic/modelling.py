@@ -94,6 +94,10 @@ class ExtendedClassifier(BaseEstimator, ClassifierMixin):
         predicted = self.clf.predict(X)
         return predicted
 
+    def predict_proba(self, X):
+        predicted_proba = self.clf.predict_proba(X)
+        return predicted_proba
+
     def cross_val_score(self, X, y, scoring='accuracy', print_cvs=True, **kwargs):
         start_time = time.time()
         score = cross_val_score(self.clf, X, y, scoring=scoring, **kwargs).mean()
