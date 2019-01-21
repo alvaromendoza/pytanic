@@ -1,5 +1,6 @@
 """Modelling utility functions and classes"""
 
+import io
 import sys
 import time
 import datetime
@@ -110,6 +111,12 @@ class ExtendedClassifier(BaseEstimator, ClassifierMixin):
         self.profile['cv_score'] = score
         self.profile['params_strategy'] = self._params_strategy
         self.profile['clf_params'] = self.clf.get_params()
+        self.profile['X_hash'] = pd.util.hash_pandas_object(X).sum()
+        self.profile['y_hash'] = pd.util.hash_pandas_object(y).sum()
+        buf = io.StringIO()
+        X.info(buf=buf)
+        self.profile['X_info'] = buf.getvalue()
+        self.profile['y_describe'] = y.describe()
         if print_cvs:
             print('cross-validation ', scoring, ': ', self.profile['cv_score'], sep='')
         return score
@@ -253,9 +260,9 @@ if __name__ == '__main__':
 #    for c in ['Title', 'Deck', 'Embarked']:
 #        X_train[c] = X_train[c].astype(str)
 #    print(X_train.dtypes)
-    forest = ExtendedClassifier.cross_validate(pipe_forest, X_train, y_train,
-                                               sklearn_cvs_kws={'cv': 5},
-                                               param_strategy='init')
+#    forest = ExtendedClassifier.cross_validate(pipe_forest, X_train, y_train,
+#                                               sklearn_cvs_kws={'cv': 5},
+#                                               param_strategy='init')
 
 
 
