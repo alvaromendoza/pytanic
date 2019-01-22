@@ -4,12 +4,12 @@ import pandas as pd
 import titanic.scripts.make_features as ft
 from pathlib import Path
 
-DATA_PATH = Path(__file__).parents[1].joinpath(r'data/scripts/make_features')
+DATA_PATH = Path(__file__).parent.joinpath(r'data')
 
 
 @pytest.fixture
 def titanic_df():
-    df = pd.read_excel(DATA_PATH/'make_features.xlsx', sheet_name='input')
+    df = pd.read_excel(DATA_PATH/'scripts_make_features.xlsx', sheet_name='input')
     return df
 
 

@@ -4,7 +4,7 @@ import pandas as pd
 from pathlib import Path
 from titanic.analysis import get_nan_counts, get_count_percentage, association_test
 
-DATA_PATH = Path(__file__).parent.joinpath(r'data/analysis')
+DATA_PATH = Path(__file__).parent.joinpath(r'data')
 
 
 def read_small_xlsx(io, sheet_name=None, print_info=True, **kwargs):
@@ -20,8 +20,10 @@ def read_small_xlsx(io, sheet_name=None, print_info=True, **kwargs):
 
 dfs = dict()
 dfs['gnc'] = dict()
-dfs['gnc']['inp'] = read_small_xlsx(DATA_PATH/'get_nan_counts.xlsx', sheet_name='input')
-dfs['gnc']['exp'] = read_small_xlsx(DATA_PATH/'get_nan_counts.xlsx', sheet_name='expected')
+dfs['gnc']['inp'] = read_small_xlsx(DATA_PATH/'analysis_get_nan_counts.xlsx',
+                                    sheet_name='input')
+dfs['gnc']['exp'] = read_small_xlsx(DATA_PATH/'analysis_get_nan_counts.xlsx',
+                                    sheet_name='expected')
 
 
 def test_get_nan_counts():
@@ -32,10 +34,11 @@ def test_get_nan_counts():
 
 
 dfs['gcp'] = dict()
-dfs['gcp']['inp'] = read_small_xlsx(DATA_PATH/'get_count_percentage.xlsx', sheet_name='input')
-dfs['gcp']['exp_a'] = read_small_xlsx(DATA_PATH/'get_count_percentage.xlsx',
+dfs['gcp']['inp'] = read_small_xlsx(DATA_PATH/'analysis_get_count_percentage.xlsx',
+                                    sheet_name='input')
+dfs['gcp']['exp_a'] = read_small_xlsx(DATA_PATH/'analysis_get_count_percentage.xlsx',
                                       sheet_name='expected_a')
-dfs['gcp']['exp_b'] = read_small_xlsx(DATA_PATH/'get_count_percentage.xlsx',
+dfs['gcp']['exp_b'] = read_small_xlsx(DATA_PATH/'analysis_get_count_percentage.xlsx',
                                       sheet_name='expected_b')
 
 
@@ -59,7 +62,7 @@ def test_get_count_percentage_raises_valueerror():
 
 
 dfs['at'] = dict()
-dfs['at']['inp'] = read_small_xlsx(DATA_PATH/'association_test.xlsx', sheet_name='input')
+dfs['at']['inp'] = read_small_xlsx(DATA_PATH/'analysis_association_test.xlsx', sheet_name='input')
 
 
 def test_association_test():

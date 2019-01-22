@@ -18,7 +18,7 @@ np.random.seed(RANDOM_SEED)
 os.environ['PYTHONHASHSEED'] = '0'
 rn.seed(RANDOM_SEED)
 
-DATA_PATH = Path(__file__).parent.joinpath(r'data/modelling')
+DATA_PATH = Path(__file__).parent.joinpath(r'data')
 
 
 @pytest.fixture
