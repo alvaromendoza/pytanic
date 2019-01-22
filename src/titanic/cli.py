@@ -1,11 +1,10 @@
 import click
-from titanic.scripts.clean import clean_generated_files
-from titanic.scripts.download_data import download_kaggle_titanic
-from titanic.scripts.make_features import make_features
-from titanic.scripts.run_notebooks import run_eda
-from titanic.scripts.run_notebooks import run_compmod
-from titanic.scripts.cross_validate_models import cross_validate_models
-from titanic.scripts.make_submission import make_submission
+import titanic.scripts.download_data
+import titanic.scripts.run_notebooks
+import titanic.scripts.make_features
+import titanic.scripts.cross_validate_models
+import titanic.scripts.make_submission
+import titanic.scripts.clean_generated_files
 
 
 @click.group(help='CLI entry point of Titanic project.')
@@ -17,37 +16,37 @@ def cli():
 @click.argument('path', type=click.Path(exists=True), default=r'data/raw')
 def download(path):
     """Download Titanic competition data files from Kaggle."""
-    download_kaggle_titanic(path)
+    titanic.scripts.download_data.main(path)
 
 
 @cli.command()
 def eda():
     """Run Jupyter notebook with exploratory data analysis."""
-    run_eda()
+    titanic.scripts.run_notebooks.run_eda()
 
 
 @cli.command()
 def features():
     """Perform feature engineering on training and test datasets."""
-    make_features()
+    titanic.scripts.make_features.main()
 
 
 @cli.command()
 def crossval():
     """Cross-validate machine learning models."""
-    cross_validate_models()
+    titanic.scripts.cross_validate_models.main()
 
 
 @cli.command()
 def compmod():
     """Run Jupyter notebook with models comparison."""
-    run_compmod()
+    titanic.scripts.run_notebooks.run_compmod()
 
 
 @cli.command()
 def submission():
     """Make prediction on test set and create submission file."""
-    make_submission()
+    titanic.scripts.make_submission.main()
 
 
 @cli.command()
@@ -63,7 +62,7 @@ def submission():
               help='Delete files only in results directory.')
 def clean(allfiles, data, logs, models, results):
     """Delete automatically generated files."""
-    clean_generated_files(allfiles, data, logs, models, results)
+    titanic.scripts.clean_generated_files.main(allfiles, data, logs, models, results)
 
 
 if __name__ == '__main__':

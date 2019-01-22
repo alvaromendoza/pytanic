@@ -69,7 +69,7 @@ def transform_object_to_categorical(train_df, test_df):
             df[col] = df[col].astype(cat_type)
 
 
-def make_features():
+def main():
     train, test = load_train_test()
     print('Train and test datasets loaded.')
     X_train, y_train = split_X_y(train)
@@ -90,4 +90,4 @@ def make_features():
 
 
 if __name__ == '__main__':
-    X_train, X_test, y_train = make_features()
+    X_train, X_test, y_train = main()

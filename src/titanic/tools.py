@@ -5,6 +5,32 @@ import pickle
 import nbformat
 from nbconvert.preprocessors import ExecutePreprocessor
 from pathlib import Path
+from kaggle.api.kaggle_api_extended import KaggleApi
+
+
+def download_competition_data_from_kaggle(competition, path=r'data/raw'):
+    r"""Download data from a Kaggle competition.
+
+    To use this function, sign up for a Kaggle account at ``https://www.kaggle.com``.
+    Then go to the 'Account' tab of your user profile
+    (``https://www.kaggle.com/<username>/account``) and select 'Create API Token'.
+    This will trigger the download ofkaggle.json, a file containing your API credentials.
+    Place this file in the location ``~/.kaggle/kaggle.json``
+    (on Windows in the location ``C:\Users\<Windows-username>\.kaggle\kaggle.json``
+    - you can check the exact location, sans drive, with ``echo %HOMEPATH%``).
+    You will also need to accept competition rules at
+    ``https://www.kaggle.com/c/<competition-name>/rules``.
+
+    Parameters
+    ----------
+    path : str
+        Where to save dataset files.
+
+    """
+
+    api = KaggleApi()
+    api.authenticate()
+    api.competition_download_cli(competition=competition, path=path)
 
 
 def clean_directory(dir_path, keep_nested_dirs=False, files_to_keep=None):

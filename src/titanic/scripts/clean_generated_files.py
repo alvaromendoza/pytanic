@@ -1,7 +1,7 @@
 from titanic.tools import clean_directory
 
 
-def clean_generated_files(allfiles=False, data=False, logs=False, models=False, results=False):
+def main(allfiles=False, data=False, logs=False, models=False, results=False):
     if allfiles:
         data, logs, models, results = True, True, True, True
     if data:
@@ -16,4 +16,4 @@ def clean_generated_files(allfiles=False, data=False, logs=False, models=False, 
 
 
 if __name__ == '__main__':
-    clean_generated_files(allfiles=True)
+    main(allfiles=True)

@@ -119,7 +119,7 @@ def cross_validate_voting(X_train, y_train, pipes, grids, kfolds):
     return voting
 
 
-def cross_validate_models():
+def main():
     # Load data
 
     X_train = tools.deserialize(r'data/processed/X_train.pickle')
@@ -141,4 +141,4 @@ def cross_validate_models():
 
 if __name__ == '__main__':
     os.chdir(r'../../../')
-    cross_validate_models()
+    main()
