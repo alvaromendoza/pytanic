@@ -76,7 +76,7 @@ plt.show()
 
 # ## Save as .py
 
-# In[8]:
+# In[1]:
 
 
 get_ipython().system('jupyter nbconvert --to script 02_compare_models.ipynb')
