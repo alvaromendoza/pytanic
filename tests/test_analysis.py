@@ -1,13 +1,18 @@
+"""Tests for module 'analysis'."""
+
+from pathlib import Path
+
 import pytest
 import numpy as np
 import pandas as pd
-from pathlib import Path
+
 from titanic.analysis import get_nan_counts, get_count_percentage, association_test
 
 DATA_PATH = Path(__file__).parent.joinpath(r'data')
 
 
 def read_small_xlsx(io, sheet_name=None, print_info=True, **kwargs):
+    """Read small test dataset and print it to stdout."""
     io = Path(io)
     df = pd.read_excel(io, sheet_name=sheet_name, **kwargs)
     if print_info:
@@ -17,6 +22,8 @@ def read_small_xlsx(io, sheet_name=None, print_info=True, **kwargs):
         print(df.dtypes, '\n')
     return df
 
+
+# Create datasets for get_nan_counts
 
 dfs = dict()
 dfs['gnc'] = dict()
@@ -32,6 +39,8 @@ def test_get_nan_counts():
     assert all(nan_counts['NaN count'] == dfs['gnc']['exp']['NaN count'])
     assert all(np.isclose(nan_counts['NaN percentage'], dfs['gnc']['exp']['NaN percentage']))
 
+
+# Create datasets for get_count_percentage
 
 dfs['gcp'] = dict()
 dfs['gcp']['inp'] = read_small_xlsx(DATA_PATH/'analysis_get_count_percentage.xlsx',
@@ -60,6 +69,8 @@ def test_get_count_percentage_raises_valueerror():
     with pytest.raises(ValueError):
         get_count_percentage(dfs['gcp']['inp'], 'b', sort='splunge')
 
+
+# Create datasets for association_test
 
 dfs['at'] = dict()
 dfs['at']['inp'] = read_small_xlsx(DATA_PATH/'analysis_association_test.xlsx', sheet_name='input')

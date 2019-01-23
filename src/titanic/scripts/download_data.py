@@ -1,4 +1,4 @@
-"""Download data from the web."""
+"""Download Titanic dataset from Kaggle."""
 
 from titanic.tools import download_competition_data_from_kaggle
 

@@ -1,10 +1,10 @@
-"""Technical utility functions"""
+"""Technical utility functions."""
 
 import os
 import pickle
+from pathlib import Path
 import nbformat
 from nbconvert.preprocessors import ExecutePreprocessor
-from pathlib import Path
 from kaggle.api.kaggle_api_extended import KaggleApi
 
 
@@ -27,13 +27,24 @@ def download_competition_data_from_kaggle(competition, path=r'data/raw'):
         Where to save dataset files.
 
     """
-
     api = KaggleApi()
     api.authenticate()
     api.competition_download_cli(competition=competition, path=path)
 
 
 def clean_directory(dir_path, keep_nested_dirs=False, files_to_keep=None):
+    r"""Delete files and/or subdirectories in selected directory.
+
+    Parameters
+    ----------
+    dir_path : str, pathlib.Path
+        Path to directory to be cleaned.
+    keep_nested_dirs : bool, default False
+        Do not delete empty subdirectories.
+    files_to_keep : sequence
+        Sequence of names of files not to be deleted.
+
+    """
     if files_to_keep is None:
         files_to_keep = list()
     for root, dirnames, filenames in os.walk(dir_path, topdown=False):
@@ -49,11 +60,13 @@ def clean_directory(dir_path, keep_nested_dirs=False, files_to_keep=None):
 
 
 def serialize(obj, file_path=None):
+    """Serialize Python object using pickle."""
     with open(file_path, 'wb') as f:
         pickle.dump(obj, f)
 
 
 def deserialize(file_path=None):
+    """Deserialize Python object using pickle."""
     with open(file_path, 'rb') as f:
         return pickle.load(f)
 
@@ -68,6 +81,7 @@ def run_ipynb(file_path):
     Parameters
     ----------
     file_path : str, pathlib.Path
+        Path to notebook to be run.
 
     References
     ----------
@@ -76,21 +90,17 @@ def run_ipynb(file_path):
     previous version", pp. 437-440, 2016.
 
     """
-
     file_path = Path(file_path)
     file_path_temp = file_path.with_suffix('.ipynb.tmp')
     file_path.parent.joinpath('.old').mkdir(parents=False, exist_ok=True)
-    file_path_old = (
-                         file_path
-                         .parent
-                         .joinpath('.old', file_path.name)
-                         .with_suffix('.ipynb.old')
-                         )
+    file_path_old = (file_path
+                     .parent
+                     .joinpath('.old', file_path.name)
+                     .with_suffix('.ipynb.old'))
 
     with open(file_path, 'r', encoding='utf-8') as nb:
         nbook = nbformat.read(nb, as_version=4)
 
-#    ep = ExecutePreprocessor(kernel_name=nbook.metadata.kernelspec.name)
     ep = ExecutePreprocessor(kernel_name='python3')
     ep.preprocess(nbook, {'metadata': {'path': file_path.parent}})
 
@@ -108,6 +118,24 @@ def run_ipynb(file_path):
 
 def print_header(header, capitalize=False, nl_before=False, nl_after=False,
                  outline='=', outline_length=50):
+    """Print header string to stdout between two outline strings.
+
+    Parameters
+    ----------
+    header : str
+        Header string.
+    catipalize : bool, default False
+        Convert header string to upper case.
+    nl_before : bool, default False
+        Insert new line before upper outline.
+    nl_after : bool, default False
+        Insert new line after lower outline.
+    outline : str
+        Symbol that lowet and upper outlines consist of.
+    outline_length : int, default 50
+        Number of tines outline symbol is replicated.
+
+    """
     nlb, nla = '', ''
     if nl_before:
         nlb = '\n'

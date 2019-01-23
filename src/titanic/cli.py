@@ -1,4 +1,7 @@
+"""Define command line interface of project Titanic."""
+
 import click
+
 import titanic.scripts.download_data
 import titanic.scripts.run_notebooks
 import titanic.scripts.make_features
@@ -7,7 +10,7 @@ import titanic.scripts.make_submission
 import titanic.scripts.clean_generated_files
 
 
-@click.group(help='CLI entry point of Titanic project.')
+@click.group(help='CLI entry point of project Titanic.')
 def cli():
     pass
 

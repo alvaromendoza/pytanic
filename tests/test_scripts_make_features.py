@@ -1,8 +1,12 @@
-import pytest
+"""Tests for script 'make_features.py'."""
+
 import os
-import pandas as pd
-import titanic.scripts.make_features as ft
 from pathlib import Path
+
+import pytest
+import pandas as pd
+
+import titanic.scripts.make_features as ft
 
 DATA_PATH = Path(__file__).parent.joinpath(r'data')
 
@@ -60,18 +64,3 @@ def test_drop_cols(titanic_df):
     cols_to_drop = ['Fare', 'SibSp']
     ft.drop_cols(titanic_df, cols_to_drop)
     assert all([c not in titanic_df.columns for c in cols_to_drop])
-
-
-def test_transform_object_to_categorical():
-    train = pd.DataFrame({'a': [1, 2, 3, 4], 'b': ['zero', 'one', 'two', 'three']})
-    test = pd.DataFrame({'a': [5, 6, 7, 8], 'b': ['one', 'two', 'four', 'nine']})
-    ft.transform_object_to_categorical(train, test)
-    assert pd.api.types.is_numeric_dtype(train['a'])
-    assert pd.api.types.is_numeric_dtype(test['a'])
-    assert pd.api.types.is_categorical_dtype(train['b'])
-    assert pd.api.types.is_categorical_dtype(test['b'])
-    train_cats = sorted(list(train['b'].cat.categories))
-    test_cats = sorted(list(test['b'].cat.categories))
-    expected_cats = ['four', 'nine', 'one', 'three', 'two', 'zero']
-    assert train_cats == expected_cats
-    assert test_cats == expected_cats

@@ -1,12 +1,12 @@
 """Perform feature engineering and make training and test datasets out of raw data."""
 
-import pickle
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 
-from pathlib import Path
-from pandas.api.types import CategoricalDtype
 from titanic.tools import serialize
+from titanic.modelling import transform_object_to_categorical
 
 
 def load_train_test(raw_data_path=r'data/raw'):
@@ -49,24 +49,6 @@ def drop_cols(df, cols_to_drop=None):
     if cols_to_drop is None:
         cols_to_drop = ['PassengerId', 'Name', 'Ticket', 'Cabin']
     df.drop(cols_to_drop, axis=1, inplace=True)
-
-
-def transform_object_to_categorical(train_df, test_df):
-    """For columns with dtype 'object' change dtype to pandas CategoricalDtype.
-
-    Assign a common exhaustive set of categories for each feature of type object in
-    train and test. The purpose is to eliminate the need to align training and validatio/test
-    datasets after dummification.
-    """
-    assert np.sum(train_df.columns != test_df.columns) == 0
-    obj_cols = list(train_df.select_dtypes(include=np.object).columns)
-    for df in [train_df, test_df]:
-        for col in obj_cols:
-            categories = (set(train_df[col].unique()) |
-                          set(test_df[col].unique())) - set([np.nan])
-            cat_type = CategoricalDtype(
-                categories=categories, ordered=None)
-            df[col] = df[col].astype(cat_type)
 
 
 def main():

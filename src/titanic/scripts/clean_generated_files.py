@@ -1,3 +1,5 @@
+"""Delete all automatically generated files within the project directory."""
+
 from titanic.tools import clean_directory
 
 

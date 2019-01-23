@@ -1,7 +1,11 @@
-import pytest
+"""Tests for modlule 'tools'."""
+
 import os
 import pickle
+
+import pytest
 import nbformat as nbf
+
 from titanic.tools import serialize, deserialize, run_ipynb, clean_directory
 
 

@@ -1,24 +1,11 @@
 """Cross-validate machine learning models."""
 
-# Fix random seeds for reproducibility
-
-from titanic.config import RANDOM_SEED
-from numpy.random import seed
-seed(RANDOM_SEED)
-import os
-os.environ['PYTHONHASHSEED'] = '0'
-import random as rn
-rn.seed(RANDOM_SEED)
-
-# Main imports
-
 import os
 import time
 import pprint
+import random as rn
+
 import numpy as np
-import titanic.tools as tools
-from titanic.modelling import SimpleDataFrameImputer, DataFrameDummifier, CategoricalToString
-from titanic.modelling import ExtendedClassifier
 from sklearn.model_selection import KFold
 from sklearn.pipeline import make_pipeline
 from sklearn.model_selection import RandomizedSearchCV
@@ -27,8 +14,18 @@ from sklearn.ensemble import RandomForestClassifier, VotingClassifier
 from sklearn.svm import SVC
 from category_encoders.ordinal import OrdinalEncoder
 
+import titanic.tools as tools
+from titanic.modelling import SimpleDataFrameImputer, DataFrameDummifier, CategoricalToString
+from titanic.modelling import ExtendedClassifier
+from titanic.config import RANDOM_SEED
+
+np.random.seed(RANDOM_SEED)
+os.environ['PYTHONHASHSEED'] = '0'
+rn.seed(RANDOM_SEED)
+
 
 def cross_validate_logreg(X_train, y_train, pipes, grids, kfolds):
+    """Cross-validate LogisticRegression pipeline."""
     pipes['logreg'] = make_pipeline(SimpleDataFrameImputer(median_cols=['Age', 'Fare'],
                                                            mode_cols=['Embarked']),
                                     DataFrameDummifier(),
@@ -46,6 +43,7 @@ def cross_validate_logreg(X_train, y_train, pipes, grids, kfolds):
 
 
 def cross_validate_forest(X_train, y_train, pipes, grids, kfolds, random_search=False):
+    """Cross-validate RandomForestClassifier pipeline."""
     pipes['forest'] = make_pipeline(CategoricalToString(),
                                     SimpleDataFrameImputer(median_cols=['Age', 'Fare'],
                                                            mode_cols=['Embarked']),
@@ -91,6 +89,7 @@ def cross_validate_forest(X_train, y_train, pipes, grids, kfolds, random_search=
 
 
 def cross_validate_svc(X_train, y_train, pipes, grids, kfolds):
+    """Cross-validate SVC pipeline."""
     pipes['svc'] = make_pipeline(SimpleDataFrameImputer(median_cols=['Age', 'Fare'],
                                                         mode_cols=['Embarked']),
                                  DataFrameDummifier(),
@@ -109,6 +108,7 @@ def cross_validate_svc(X_train, y_train, pipes, grids, kfolds):
 
 
 def cross_validate_voting(X_train, y_train, pipes, grids, kfolds):
+    """Cross-validate VotingClassifier."""
     estimators = [('logreg', pipes['logreg']), ('forest', pipes['forest']), ('svc', pipes['svc'])]
     voting = ExtendedClassifier.cross_validate(VotingClassifier(estimators, voting='hard'),
                                                X_train, y_train,
@@ -120,18 +120,12 @@ def cross_validate_voting(X_train, y_train, pipes, grids, kfolds):
 
 
 def main():
-    # Load data
-
     X_train = tools.deserialize(r'data/processed/X_train.pickle')
     y_train = tools.deserialize(r'data/processed/y_train.pickle')
-
-    # Create global objects
 
     pipes = dict()
     grids = dict()
     kfolds = KFold(n_splits=5, shuffle=True, random_state=RANDOM_SEED)
-
-    # Train models
 
     cross_validate_logreg(X_train, y_train, pipes, grids, kfolds)
     cross_validate_forest(X_train, y_train, pipes, grids, kfolds)

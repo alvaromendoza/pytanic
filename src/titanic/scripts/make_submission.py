@@ -1,4 +1,7 @@
+"""Make prediction on the test set, and save it to results/submission.csv."""
+
 import pandas as pd
+
 import titanic.tools as tools
 from titanic.modelling import ExtendedClassifier
 

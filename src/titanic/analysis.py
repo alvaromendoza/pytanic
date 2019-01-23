@@ -1,4 +1,4 @@
-"""Analytical utility functions"""
+"""Analytical utility functions."""
 
 import numpy as np
 import pandas as pd
@@ -16,10 +16,9 @@ def get_nan_counts(df):
     Returns
     -------
     pandas.DataFrame
-        Resulting DataFrame with columns 'Feature', 'NaN count', and NaN percentage'.
+        Resulting DataFrame with columns 'Feature', 'NaN count', and 'NaN percentage'.
 
     """
-
     nan_counts = pd.DataFrame(df.isnull().sum()).reset_index()
     nan_counts.columns = ['Feature', 'NaN count']
     nan_counts['NaN percentage'] = nan_counts['NaN count'] / df.shape[0]
@@ -47,7 +46,6 @@ def get_count_percentage(df, column, sort='count'):
         Resulting DataFrame with columns {column}, 'Count', and 'Percentage'.
 
     """
-
     result = df[column].value_counts().reset_index()
     result.columns = [column, 'Count']
     result['Percentage'] = result['Count'] / result['Count'].sum()
@@ -73,7 +71,7 @@ def association_test(X, y, sort_column=2):
     Parameters
     ----------
     X : array_like
-        pandas.DaraFrame or another oject that can be converted into one.
+        pandas.DaraFrame or another oject that can be converted to one.
         May contain categorical features of type object.
     y : array_like, shape (X.shape[0], 0 or 1)
         pandas.Series or another oject that can be converted into one.
@@ -86,7 +84,6 @@ def association_test(X, y, sort_column=2):
     pandas.DataFrame
 
     """
-
     # Regression
     output_regr = []
     X = pd.DataFrame(X)
