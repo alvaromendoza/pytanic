@@ -13,6 +13,10 @@ dependencies:
   - pandas>=0.23.0
   - click>=6.7
   - scikit-learn>=0.20.2
+  - jupyter>=4.4.0
+  - jupyter_contrib_nbextensions>=0.5.1
+  - autopep8>=1.3.5
+  - xlrd>=0.9.0
   - datrie
   - pip:
     - kaggle>=1.5.1.1
