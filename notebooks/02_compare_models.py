@@ -5,7 +5,7 @@
 
 # ## IPython magics
 
-# In[ ]:
+# In[1]:
 
 
 get_ipython().run_line_magic('matplotlib', 'inline')
@@ -13,7 +13,7 @@ get_ipython().run_line_magic('matplotlib', 'inline')
 
 # ## Imports
 
-# In[ ]:
+# In[2]:
 
 
 import pandas as pd
@@ -33,7 +33,7 @@ plt.rcParams['figure.figsize'] = [15, 4.5]
 
 # ## Deserialize models
 
-# In[ ]:
+# In[3]:
 
 
 models = dict()
@@ -46,20 +46,20 @@ models
 
 # ## Compare models
 
-# In[ ]:
+# In[4]:
 
 
 scores = {name: model.profile['cv_score'] for name, model in models.items()}
 scores
 
 
-# In[ ]:
+# In[5]:
 
 
 list(scores.keys())
 
 
-# In[ ]:
+# In[6]:
 
 
 fig = plt.figure(figsize=[15, 5])
@@ -76,8 +76,15 @@ plt.show()
 
 # ## Save as .py
 
-# In[1]:
+# In[ ]:
 
 
+get_ipython().run_cell_magic('javascript', '', 'IPython.notebook.save_notebook()')
+
+
+# In[ ]:
+
+
+# sdfgjlsdfglksdjg
 get_ipython().system('jupyter nbconvert --to script 02_compare_models.ipynb')
 
