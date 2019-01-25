@@ -42,7 +42,7 @@ def crossval():
 
 @cli.command()
 def compmod():
-    """Run Jupyter notebook with models comparison."""
+    """Run Jupyter notebook with model comparison."""
     titanic.scripts.run_notebooks.run_compmod()
 
 
