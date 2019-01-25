@@ -98,6 +98,8 @@ results/*
 # Dummy files and scratchpads
 *dummy*
 *scratch*
+*_old*
+old_*
 
 # Keep empty folders
 !*.gitkeep
