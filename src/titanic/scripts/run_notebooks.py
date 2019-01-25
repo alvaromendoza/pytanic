@@ -4,11 +4,11 @@ from titanic.tools import run_ipynb
 
 
 def run_eda():
-    run_ipynb(r'notebooks/01_exploratory_data_analysis_dummy.ipynb')
+    run_ipynb(r'notebooks/01_exploratory_data_analysis.ipynb')
 
 
 def run_compmod():
-    run_ipynb(r'notebooks/02_compare_models_dummy.ipynb')
+    run_ipynb(r'notebooks/02_compare_models.ipynb')
 
 
 def main():
