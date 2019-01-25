@@ -10,7 +10,7 @@ def main(allfiles=False, data=False, logs=False, models=False, results=False):
         clean_directory(r'data', files_to_keep=[r'.gitkeep'])
     if logs:
         pass
-#        clean_directory(r'logs', files_to_keep=[r'.gitkeep'])  # Temporarily disabled
+        clean_directory(r'logs', files_to_keep=[r'.gitkeep', r'old_logs.zip'])
     if models:
         clean_directory(r'models', files_to_keep=[r'.gitkeep'])
     if results:
